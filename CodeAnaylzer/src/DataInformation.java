@@ -5,6 +5,7 @@
  */
 public class DataInformation {
 	private String name;
+	private String scope;
 	private String datatype;
 	// private String initValue; //additional Function not needed in rev 1
 	
@@ -13,6 +14,20 @@ public class DataInformation {
 	private String parameters;
 	
 	// GET and SET methods
+	
+	/**
+	 * @return the scope
+	 */
+	public String getScope() {
+		return scope;
+	}
+	/**
+	 * @param scope the scope to set
+	 */
+	public void setScope(String scope) {
+		this.scope = scope;
+	}
+
 	public String getName() {
 		return name;
 	}
