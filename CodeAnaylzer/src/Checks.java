@@ -28,7 +28,71 @@ public class Checks{
 		result = result || text.startsWith("float");
 		result = result || text.startsWith("double");
 		result = result || text.startsWith("void");
-		return result
+		return result;
+	}
+	
+	public boolean startswithHighLevelKey(String text){
+		boolean result = false ;
+		result = result || text.startsWith("abstract");
+		result = result || text.startsWith("class");
+		result = result || text.startsWith("interface");
+		result = result || text.startsWith("strictfp");
+		result = result || text.startsWith("import");
+		result = result || text.startsWith("package");
+		return result;
+	}
+	public boolean startswithClassMod(String text){
+		boolean result = false ;
+		result = result || text.startsWith("extends");
+		return result;
+	}
+	public boolean startswithFunctionMod(String text){
+		boolean result = false ;
+		result = result || text.startsWith("throws");
+		return result;
+	}
+	public boolean startswithControlStructure(String text){
+		boolean result = false ;
+		result = result || text.startsWith("if");
+		result = result || text.startsWith("else");
+		result = result || text.startsWith("for");
+		result = result || text.startsWith("while");
+		result = result || text.startsWith("do");
+		result = result || text.startsWith("switch");
+		result = result || text.startsWith("case");
+		result = result || text.startsWith("default");
+		result = result || text.startsWith("try");
+		result = result || text.startsWith("catch");
+		return result;
+	}
+	public boolean startswithModifier(String text){
+		boolean result = false ;
+		result = result || text.startsWith("final");
+		result = result || text.startsWith("static");
+		result = result || text.startsWith("volatile");
+		result = result || text.startsWith("transient");
+		return result;
+	}
+	public boolean startswithOtherSimple(String text){
+		boolean result = false ;
+		result = result || text.startsWith("continue");
+		result = result || text.startsWith("break");
+		result = result || text.startsWith("throw");
+		result = result || text.startsWith("assert");
+		result = result || text.startsWith("return");
+		return result;
+	}
+	public boolean startswithSpecial(String text){
+		boolean result = false ;
+		result = result || text.startsWith("this");
+		result = result || text.startsWith("super");
+		result = result || text.startsWith("new");
+		return result;
+	}
+	public boolean startswithExcluded(String text){
+		boolean result = false ;
+		result = result || text.startsWith("native");
+		return result;
 	}
 	
 
