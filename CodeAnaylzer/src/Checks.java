@@ -71,6 +71,7 @@ public class Checks{
 		result = result || text.startsWith("static");
 		result = result || text.startsWith("volatile");
 		result = result || text.startsWith("transient");
+		result = result || text.startsWith("synchronized");
 		return result;
 	}
 	public boolean startswithOtherSimple(String text){
