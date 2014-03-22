@@ -10,7 +10,11 @@ public class Checks{
 	 * @return
 	 */
 	public boolean startswithACL(String text){
-		return false;
+		boolean result = false ;
+		result = result || text.startsWith("public");
+		result = result || text.startsWith("protected");
+		result = result || text.startsWith("private");
+		return result;
 	}
 	
 	public boolean startswithPrimitiveDatatype(String text){
