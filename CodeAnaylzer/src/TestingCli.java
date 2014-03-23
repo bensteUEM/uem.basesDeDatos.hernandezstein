@@ -1,4 +1,3 @@
-
 public class TestingCli {
 
 	/**
@@ -11,7 +10,7 @@ public class TestingCli {
 		
 		Gui gui = new Gui();
 		gui.setVisible(true);
-
+		
 	}
 
 }
