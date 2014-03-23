@@ -124,7 +124,8 @@ public class TextSplitter {
 				insideLineComment = false;
 			}
 
-			if(content.charAt(i) == '"' && insideLineComment==false && insideMultilineComment==false){
+			if(content.charAt(i) == '"' && insideLineComment==false && insideMultilineComment==false
+					&& insideSQuotes==false){
 				if(insideQuotes == false){
 					insideQuotes = true;
 				} else {
@@ -165,7 +166,7 @@ public class TextSplitter {
 		}
 		
 	} // End of the curlyCountLeveled method
-
+	
 	protected void finalize() throws Throwable {
 		closeFile();
 		super.finalize();
