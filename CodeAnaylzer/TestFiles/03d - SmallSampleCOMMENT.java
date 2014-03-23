@@ -8,6 +8,8 @@ public class SmallSample {
 	
 	String s = "{{{{";
 	char c = '{';
+	String s2 = "''{'";
+	char c2 = '"';
 	
 	/*
 	 * {{{{{
