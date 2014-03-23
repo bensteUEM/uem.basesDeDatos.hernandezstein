@@ -7,6 +7,7 @@
 public class SmallSample {
 	
 	String s = "{{{{";
+	char c = '{';
 	
 	/*
 	 * {{{{{
