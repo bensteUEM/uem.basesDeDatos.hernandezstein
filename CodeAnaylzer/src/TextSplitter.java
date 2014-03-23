@@ -86,35 +86,74 @@ public class TextSplitter {
 	} // End of closeFile method
 	
 	/**
-	 * This method counts the number of curly brackets used in the file
-	 * //TODO - iterate through File and
-	 * @return
+	 * This method counts the number of valid curly brackets used in the file
+	 * @return true if the number of curly braces is balanced,
+	 * false in every other case.
 	 */
 	public boolean curlyCountLeveled(){
-		// Count 
-		
-		int curlyCounter = 0;
-		int quoteCounter = 0;
-		String s1 = "Hello";
-		s1.charAt(1);
-		
-		for(int i=0; i<readFile().length() ; i++){
-			if(readFile().charAt(i) == '{'){
-				curlyCounter++;
+
+		// Opens and reads the file
+		openFile();
+		String content = readFile();
+
+		// Needed variables
+		int level = 0;
+		boolean insideLineComment = false;
+		boolean insideMultilineComment = false;
+		boolean insideQuotes = false;
+
+		// Code processing
+		for(int i=0; i<content.length(); i++){
+			
+			if(String.valueOf(content.charAt(i)).equals("/") && String.valueOf(content.charAt(i+1)).equals("*") 
+					&& String.valueOf(content.charAt(i+2)).equals("*") ){
+				insideMultilineComment = true;
 			}
-			if(readFile().charAt(i) == '}'){
-				curlyCounter--;
+
+			if(String.valueOf(content.charAt(i)).equals("/") && String.valueOf(content.charAt(i+1)).equals("*") 
+					&& !(String.valueOf(content.charAt(i+2)).equals("*")) ){
+				insideMultilineComment = true;
 			}
-		}
-		if(curlyCounter == 0){
+
+			if(String.valueOf(content.charAt(i)).equals("/") && String.valueOf(content.charAt(i+1)).equals("/") ){
+				insideLineComment = true;
+			}
+
+			if(String.valueOf(content.charAt(i)).equals("\n") && insideLineComment==true){
+				insideLineComment = false;
+			}
+
+			if(content.charAt(i) == '"' && insideLineComment==false && insideMultilineComment==false){
+				if(insideQuotes == false){
+					insideQuotes = true;
+				} else {
+					insideQuotes = false;
+				}
+			}
+
+			if(String.valueOf(content.charAt(i)).equals("*") && String.valueOf(content.charAt(i+1)).equals("/") ){
+				insideMultilineComment = false;
+			}
+
+			if(content.charAt(i) == '{' && insideLineComment==false 
+					&& insideMultilineComment==false  && insideQuotes==false){
+				level++;
+			}
+			if(content.charAt(i) == '}' && insideLineComment==false 
+					&& insideMultilineComment==false && insideQuotes==false){
+				level--;
+			}
+
+		} // End of the for loop
+
+		if(level == 0){
+			closeFile();
 			return true;
 		} else {
+			closeFile();
 			return false;
 		}
 		
-	}
-	
+	} // End of the curlyCountLeveled method
 
-
-
-}
+} // End of the TextSplitter class
