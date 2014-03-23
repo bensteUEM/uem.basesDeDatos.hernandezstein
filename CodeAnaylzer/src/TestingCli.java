@@ -11,12 +11,7 @@ public class TestingCli {
 		
 		Gui gui = new Gui();
 		gui.setVisible(true);
-		
-		/*TextSplitter ts = new TextSplitter("C:/Users/David/Desktop/MainCl.java");
-		ts.openFile();
-		System.out.println(ts.readFile());
-		ts.closeFile();*/
-		
+
 	}
 
 }
