@@ -157,4 +157,9 @@ public class TextSplitter {
 		
 	} // End of the curlyCountLeveled method
 
+	protected void finalize() throws Throwable {
+		closeFile();
+		super.finalize();
+	} // End of finalize() method
+
 } // End of the TextSplitter class
