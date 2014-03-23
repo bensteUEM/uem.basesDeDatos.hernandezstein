@@ -167,6 +167,64 @@ public class TextSplitter {
 		
 	} // End of the curlyCountLeveled method
 	
+	/**
+	 * This method returns a string that contains all
+	 * the .JAVA file content without comments.
+	 * @return A string that contains all the file content
+	 * without comments.
+	 */
+	public String deleteComments(){
+		// Opens & reads the file
+		openFile();
+		String content = readFile();
+
+		// Needed variables
+		boolean insideLineComment = false;
+		boolean insideMultilineComment = false;
+		StringBuilder noComments = new StringBuilder();
+
+		// Code processing
+		for(int i=0; i<content.length(); i++){ // Detects '/**' comment type
+			System.out.print(content.charAt(i) );
+			if(String.valueOf(content.charAt(i)).equals("/") && String.valueOf(content.charAt(i+1)).equals("*") 
+					&& String.valueOf(content.charAt(i+2)).equals("*") ){
+				System.out.println("/** Comment detected");
+				insideMultilineComment = true;
+			}
+
+			if(String.valueOf(content.charAt(i)).equals("/") && String.valueOf(content.charAt(i+1)).equals("*") 
+					&& !(String.valueOf(content.charAt(i+2)).equals("*")) ){
+				System.out.println("/* Comment detected");
+				insideMultilineComment = true;
+			}
+
+			if(String.valueOf(content.charAt(i)).equals("/") && String.valueOf(content.charAt(i+1)).equals("/") ){
+				System.out.println("// Comment detected");
+				insideLineComment = true;
+			}
+
+			if(String.valueOf(content.charAt(i)).equals("\n") &&  insideLineComment==true){
+				insideLineComment = false;
+			}
+
+			if(i>1 && String.valueOf(content.charAt(i-2)).equals("*") && String.valueOf(content.charAt(i-1)).equals("/") ){
+				System.out.println("End of comment");
+				insideMultilineComment = false;
+			}
+
+			if(insideLineComment==false && insideMultilineComment==false){
+				noComments.append(content.charAt(i));
+			}
+
+		}
+
+		closeFile();
+		return noComments.toString();
+
+	}
+
+
+	
 	protected void finalize() throws Throwable {
 		closeFile();
 		super.finalize();
