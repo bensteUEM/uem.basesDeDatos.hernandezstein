@@ -123,7 +123,8 @@ public class TextSplitter {
 				insideLineComment = false;
 			}
 
-			if(content.charAt(i) == '"' && insideLineComment==false && insideMultilineComment==false){
+			if( (content.charAt(i) == '"' || String.valueOf(content.charAt(i)).equals("'"))
+					&& insideLineComment==false && insideMultilineComment==false){
 				if(insideQuotes == false){
 					insideQuotes = true;
 				} else {
