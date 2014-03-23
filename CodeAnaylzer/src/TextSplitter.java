@@ -100,6 +100,7 @@ public class TextSplitter {
 		int level = 0;
 		boolean insideLineComment = false;
 		boolean insideMultilineComment = false;
+		boolean insideSQuotes = false;
 		boolean insideQuotes = false;
 
 		// Code processing
@@ -123,8 +124,7 @@ public class TextSplitter {
 				insideLineComment = false;
 			}
 
-			if( (content.charAt(i) == '"' || String.valueOf(content.charAt(i)).equals("'"))
-					&& insideLineComment==false && insideMultilineComment==false){
+			if(content.charAt(i) == '"' && insideLineComment==false && insideMultilineComment==false){
 				if(insideQuotes == false){
 					insideQuotes = true;
 				} else {
@@ -132,16 +132,25 @@ public class TextSplitter {
 				}
 			}
 
+			if(String.valueOf(content.charAt(i)).equals("'") && insideLineComment==false 
+					&& insideMultilineComment==false && insideQuotes==false){
+				if(insideSQuotes == false){
+					insideSQuotes = true;
+				} else {
+					insideSQuotes = false;
+				}
+			}
+
 			if(String.valueOf(content.charAt(i)).equals("*") && String.valueOf(content.charAt(i+1)).equals("/") ){
 				insideMultilineComment = false;
 			}
 
-			if(content.charAt(i) == '{' && insideLineComment==false 
-					&& insideMultilineComment==false  && insideQuotes==false){
+			if(content.charAt(i) == '{' && insideLineComment==false && insideMultilineComment==false  
+					&& insideQuotes==false && insideSQuotes==false){
 				level++;
 			}
-			if(content.charAt(i) == '}' && insideLineComment==false 
-					&& insideMultilineComment==false && insideQuotes==false){
+			if(content.charAt(i) == '}' && insideLineComment==false && insideMultilineComment==false 
+					&& insideQuotes==false && insideSQuotes==false){
 				level--;
 			}
 
