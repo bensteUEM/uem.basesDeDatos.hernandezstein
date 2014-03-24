@@ -38,4 +38,10 @@ public class JavaCodeString implements JavaStructure {
 	public String toString() {
 		return this.text;
 	} // End toString()
+
+	@Override
+	public boolean isBlock() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }
