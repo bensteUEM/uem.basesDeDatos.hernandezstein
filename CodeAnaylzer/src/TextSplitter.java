@@ -44,10 +44,10 @@ public class TextSplitter {
 		try {
 			fr = new FileReader(file);
 			br = new BufferedReader(fr);
-			LOG.fine("the following file has been opened  "+file);
+			LOG.fine("the following file has been opened  " + file);
 			return true;
 		} catch (IOException e) {
-			LOG.warning("issues opening the file: "+e);
+			LOG.warning("issues opening the file: " + e);
 			return false;
 		}
 	} // End of openFile() method
@@ -263,19 +263,45 @@ public class TextSplitter {
 	public ArrayList<JavaStructure> structureCode() {
 		ArrayList<String> line;
 		String textLine;
-
 		try {
-			System.out.println(br.readLine()); // TODO temp
-			/*
-			 * while (null != (textLine = br.readLine())) {
-			 * System.out.println(textLine); //TODO DEBUG line =
-			 * (ArrayList<String>) Arrays.asList(textLine.split(" ")); }
-			 */
+			while (null != (textLine = br.readLine())) {
+				/*
+				 * This part will read a new Line and convert it to an ArrayList
+				 * split by Spaces
+				 */
+				LOG.finest("started with new line");
+				System.out.println(textLine); // TODO DEBUG line =
+				java.util.List<String> templine = Arrays.asList(textLine
+						.split(" "));
+				line = new ArrayList<String>(templine);
+
+				// This part will search for empty items from the line
+				ArrayList<String> delete = new ArrayList<String>();
+				for (String text : line) {
+					if ((text.equals("")) || (text.equals(" "))
+							|| (text == null)) {
+						System.out.println("items removed from text");
+						delete.add(text);
+					}
+				}
+				// This part removes all empty items from a line 
+				for (String text : delete) {
+					line.remove(text);
+				}
+				delete = null;
+				// End of looking for empty values
+
+				// Skip the line if its empty
+				if (line.isEmpty()) {
+					continue;
+				}
+
+				// TODO continue here with analysis
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return null; // TODO DEBUG
 	}
-
 } // End of the TextSplitter class
