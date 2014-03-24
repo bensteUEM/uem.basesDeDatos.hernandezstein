@@ -23,6 +23,7 @@ public class TextSplitter {
 		// this.file = ...fileSourceCode = 
 		// TODO
 		this.file = new File(pathToSourceCode);
+		openFile();
 	}
 	
 	/**
