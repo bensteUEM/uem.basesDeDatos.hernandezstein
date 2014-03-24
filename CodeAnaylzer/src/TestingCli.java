@@ -17,9 +17,13 @@ public class TestingCli {
 		*/
 
 		/* TextSplitter Testing Part */
-		TextSplitter test = new TextSplitter("TestFiles"+File.separator+"01 - SmallSample.java");
-		test.structureCode();
+		String path1 = "TestFiles"+File.separator+"01 - SmallSample.java";
+		String path2 = "TestFiles"+File.separator+"03d - SmallSampleCOMMENT.java";
+		TextSplitter test = new TextSplitter(path2);
+		//test.structureCode();
+		System.out.println(test.curlyCountLeveled());
 		/* TextSplitter Testing Part END*/
+
 	}
 
 }
