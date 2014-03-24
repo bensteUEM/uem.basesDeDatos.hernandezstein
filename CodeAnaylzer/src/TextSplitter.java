@@ -1,7 +1,11 @@
+import java.awt.List;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.logging.Logger;
 
 /**
  * This class reads a .JAVA file and splits the source code into different
@@ -11,7 +15,8 @@ import java.io.IOException;
  * 
  */
 public class TextSplitter {
-
+	private final static Logger LOG = Logger.getLogger(TextSplitter.class
+			.getName());
 	private File file;
 	private FileReader fr;
 	private BufferedReader br;
@@ -26,7 +31,8 @@ public class TextSplitter {
 		// this.file = ...fileSourceCode =
 		// TODO
 		this.file = new File(pathToSourceCode);
-		openFile();
+		this.openFile();
+		LOG.fine("Text Splitter created");
 	}
 
 	/**
@@ -38,8 +44,10 @@ public class TextSplitter {
 		try {
 			fr = new FileReader(file);
 			br = new BufferedReader(fr);
+			LOG.fine("the following file has been opened  "+file);
 			return true;
 		} catch (IOException e) {
+			LOG.warning("issues opening the file: "+e);
 			return false;
 		}
 	} // End of openFile() method
@@ -244,5 +252,30 @@ public class TextSplitter {
 		closeFile();
 		super.finalize();
 	} // End of finalize() method
+
+	/**
+	 * This method is used to read the file line by line and structure it into
+	 * smaller parts which represent its structure
+	 * 
+	 * @return structured SourceCode
+	 * @author benste
+	 */
+	public ArrayList<JavaStructure> structureCode() {
+		ArrayList<String> line;
+		String textLine;
+
+		try {
+			System.out.println(br.readLine()); // TODO temp
+			/*
+			 * while (null != (textLine = br.readLine())) {
+			 * System.out.println(textLine); //TODO DEBUG line =
+			 * (ArrayList<String>) Arrays.asList(textLine.split(" ")); }
+			 */
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		return null; // TODO DEBUG
+	}
 
 } // End of the TextSplitter class
