@@ -7,12 +7,27 @@
  */
 public class Checks {
 	/**
+	 * Checks if the text starts with a characters which are known to be a
+	 * JavaKeyword
+	 * 
+	 * @return
+	 */
+	public static boolean startswithKeyword(String text) {
+		return startswithACL(text) || startswithPrimitiveDatatype(text)
+				|| startswithHighLevelKey(text) || startswithClassMod(text)
+				|| startswithFunctionMod(text)
+				|| startswithControlStructure(text) || startswithModifier(text)
+				|| startswithOtherSimple(text) || startswithSpecial(text)
+				|| startswithExcluded(text);
+	}
+
+	/**
 	 * Checks if the text starts with a Java Access modifier
 	 * 
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithACL(String text) {
+	public static boolean startswithACL(String text) {
 		boolean result = false;
 		result = result || text.startsWith("public");
 		result = result || text.startsWith("protected");
@@ -26,7 +41,7 @@ public class Checks {
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithPrimitiveDatatype(String text) {
+	public static boolean startswithPrimitiveDatatype(String text) {
 		boolean result = false;
 		result = result || text.startsWith("boolean");
 		result = result || text.startsWith("byte");
@@ -47,7 +62,7 @@ public class Checks {
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithHighLevelKey(String text) {
+	public static boolean startswithHighLevelKey(String text) {
 		boolean result = false;
 		result = result || text.startsWith("abstract");
 		result = result || text.startsWith("class");
@@ -64,7 +79,7 @@ public class Checks {
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithClassMod(String text) {
+	public static boolean startswithClassMod(String text) {
 		boolean result = false;
 		result = result || text.startsWith("extends");
 		return result;
@@ -76,7 +91,7 @@ public class Checks {
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithFunctionMod(String text) {
+	public static boolean startswithFunctionMod(String text) {
 		boolean result = false;
 		result = result || text.startsWith("throws");
 		return result;
@@ -88,7 +103,7 @@ public class Checks {
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithControlStructure(String text) {
+	public static boolean startswithControlStructure(String text) {
 		boolean result = false;
 		result = result || text.startsWith("if");
 		result = result || text.startsWith("else");
@@ -111,7 +126,7 @@ public class Checks {
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithModifier(String text) {
+	public static boolean startswithModifier(String text) {
 		boolean result = false;
 		result = result || text.startsWith("final");
 		result = result || text.startsWith("static");
@@ -128,7 +143,7 @@ public class Checks {
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithOtherSimple(String text) {
+	public static boolean startswithOtherSimple(String text) {
 		boolean result = false;
 		result = result || text.startsWith("continue");
 		result = result || text.startsWith("break");
@@ -143,7 +158,7 @@ public class Checks {
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithSpecial(String text) {
+	public static boolean startswithSpecial(String text) {
 		boolean result = false;
 		result = result || text.startsWith("this");
 		result = result || text.startsWith("super");
@@ -157,7 +172,7 @@ public class Checks {
 	 * @param text
 	 * @return
 	 */
-	public boolean startswithExcluded(String text) {
+	public static boolean startswithExcluded(String text) {
 		boolean result = false;
 		result = result || text.startsWith("native");
 		return result;
