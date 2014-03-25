@@ -20,11 +20,21 @@ public class TestingCli {
 		} else if (TEST == 2) { // GUI TEST David
 			Gui gui = new Gui();
 			gui.setVisible(true);
+			
+			
 		} else if (TEST == 51) { // Structure Test benste
 			String path1 = "TestFiles" + File.separator
 					+ "01 - SmallSample.java";
+			String path2 = "TestFiles" + File.separator
+					+ "02 - SmallSampleVAR.java";
+			/*02b - SmallSampleVAR.java
+			02c - SmallSampleVAR.java
+			02d - SmallSampleVAR.java
+			02e - SmallSampleVAR.java
+			*/
 			test = new TextSplitter(path1);
-			test.structureCode();
+
+			System.out.println(test.structureCode());
 		}
 
 		else {

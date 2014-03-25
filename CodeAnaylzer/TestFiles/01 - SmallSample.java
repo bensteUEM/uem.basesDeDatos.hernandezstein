@@ -1,4 +1,4 @@
 
-public class SmallSample {
+private class SmallSample {
 
 }
