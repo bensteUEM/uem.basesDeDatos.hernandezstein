@@ -8,6 +8,7 @@
 public class DataInformation {
 	private String name;
 	private String scope;
+	private String acl;
 	private String datatype;
 	// private String initValue; //additional Function not needed in rev 1
 
@@ -62,5 +63,19 @@ public class DataInformation {
 
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
+	}
+
+	/**
+	 * @return the acl
+	 */
+	public String getAcl() {
+		return acl;
+	}
+
+	/**
+	 * @param acl the acl to set
+	 */
+	public void setAcl(String acl) {
+		this.acl = acl;
 	}
 }

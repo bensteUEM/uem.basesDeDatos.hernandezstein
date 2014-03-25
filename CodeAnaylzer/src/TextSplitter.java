@@ -1,4 +1,3 @@
-import java.awt.List;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -260,48 +259,125 @@ public class TextSplitter {
 	 * @return structured SourceCode
 	 * @author benste
 	 */
-	public ArrayList<JavaStructure> structureCode() {
+	public ArrayList<JavaCodeBlock> structureCode() {
+		// br.reset();// TODO reset BR to start of file
+		ArrayList<JavaCodeBlock> result = new ArrayList<JavaCodeBlock>(0);
+		ArrayList<String> line = new ArrayList<String>(0);
+		while ((line = getNextCodeLine()) != null) {
+			if (!(line.isEmpty())) {
+				result.add((JavaCodeBlock) structureLine(line, ""));
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * recursive function to analyse the structure of a String
+	 * 
+	 * @param line
+	 *            the line which should be analysed
+	 * @param specialStructure
+	 *            - specifies if the following part is part of a more specific
+	 *            grammar
+	 * @return
+	 */
+	public JavaCodeBlock structureLine(ArrayList<String> line,
+			String specialStructure) {
+		String item = line.get(0);
+		JavaCodeBlock result = new JavaCodeBlock(item,specialStructure);
+
+		if (Checks.startswithKeyword(item)) {
+			if (Checks.startswithACL(item)) { // if the line starts with ACL
+				ArrayList<String> sublist = new ArrayList<String>(line.subList(
+						1, line.size()));
+				result = structureLine(sublist, "");
+				result.get(0).setACL(item);
+			} // end of ACL
+			else if (Checks.startswithHighLevelKey(item)) {
+				if (item.equals("class")) {
+					// if name of block and curly are not seperated split them
+					// now
+					if (line.get(1).contains("{")) {
+						ArrayList split = new ArrayList<String>(
+								Arrays.asList(line.get(1).split("{")));
+						line.addAll(1, split);
+						line.add(2, "{"); // add the remove seperator
+					} // end of split name from curly
+
+					JavaCodeBlock block = new JavaCodeBlock(line.get(1), item); // create
+																				// object
+																				// with
+																				// description
+
+					// subroutine for block starts with (0=class, 1=name 2>=POST
+					// CURLY)
+					ArrayList<String> sublist = new ArrayList<String>(
+							line.subList(2, line.size()));
+					block.add(structureLine(sublist, "block"));
+					//add the completed block to the result
+					result.addAll(block);
+
+				} else {
+					LOG.warning("ḧighlevel key not implemented: " + item);
+				}
+
+			} // end of highlevel key
+				// begin of block treatment start without first curly and will
+				// return a special last element once last curly is reached
+			else if (specialStructure.equals("block")) {
+				// TODO do something with the block content until its ended
+				LOG.info("forget about the content of the block for now);");
+
+				// TODO ending block with matching }
+				while (!(line.get(line.size()).equals("}")))// temp to finish
+															// just for 1 level
+															// block ! //TODO
+					//TODO put remains after } back into some kind of queue for parent process
+					//make line a class var?
+				{
+					result.add(structureLine(line, ""));
+					line.addAll(getNextCodeLine());
+					LOG.warning("temporary finish the code on one level");
+				}
+			} // end of subroutine for block
+
+		} else {
+			LOG.warning("unimplemented");
+		}
+		return result;
+	}
+
+	public ArrayList<String> getNextCodeLine() {
 		ArrayList<String> line;
 		String textLine;
 		try {
-			while (null != (textLine = br.readLine())) {
-				/*
-				 * This part will read a new Line and convert it to an ArrayList
-				 * split by Spaces
-				 */
-				LOG.finest("started with new line");
-				System.out.println(textLine); // TODO DEBUG line =
-				java.util.List<String> templine = Arrays.asList(textLine
-						.split(" "));
-				line = new ArrayList<String>(templine);
+			textLine = br.readLine(); // for each line
+			/*
+			 * This part will read a new Line and convert it to an ArrayList
+			 * split by Spaces
+			 */
+			LOG.finest("started with new line");
+			java.util.List<String> templine = Arrays
+					.asList(textLine.split(" "));
+			line = new ArrayList<String>(templine);
 
-				// This part will search for empty items from the line
-				ArrayList<String> delete = new ArrayList<String>();
-				for (String text : line) {
-					if ((text.equals("")) || (text.equals(" "))
-							|| (text == null)) {
-						System.out.println("items removed from text");
-						delete.add(text);
-					}
+			// This part will search for empty items from the line
+			ArrayList<String> delete = new ArrayList<String>();
+			for (String text : line) {
+				if ((text.equals("")) || (text.equals(" ")) || (text == null)) {
+					System.out.println("items removed from text");
+					delete.add(text);
 				}
-				// This part removes all empty items from a line 
-				for (String text : delete) {
-					line.remove(text);
-				}
-				delete = null;
-				// End of looking for empty values
-
-				// Skip the line if its empty
-				if (line.isEmpty()) {
-					continue;
-				}
-
-				// TODO continue here with analysis
 			}
+			// This part removes all empty items from a line
+			for (String text : delete) {
+				line.remove(text);
+			}
+			return line;
+			// End of looking for empty values
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOG.warning(e.getMessage());
+			return null;
 		}
-
-		return null; // TODO DEBUG
 	}
 } // End of the TextSplitter class

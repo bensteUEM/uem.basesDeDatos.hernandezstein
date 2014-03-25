@@ -4,25 +4,32 @@ public class TestingCli {
 
 	/**
 	 * @param args
-	 *            Not used in this case
-	 * @author tbd
+	 * @author David & benste
 	 */
+
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		// CodeAnalyzer program = new CodeAnalyzer();
+		TextSplitter test;
+		int TEST = 51; // david < 50 == benste > 50
+		/* Test Scenario */
 
-		/* GUI testing part
-		Gui gui = new Gui();
-		gui.setVisible(true);
-		*/
+		if (TEST == 1) { // Curly Test David
+			String path2 = "TestFiles" + File.separator
+					+ "03d - SmallSampleCOMMENT.java";
+			test = new TextSplitter(path2);
+			System.out.println(test.curlyCountLeveled());
+		} else if (TEST == 2) { // GUI TEST David
+			Gui gui = new Gui();
+			gui.setVisible(true);
+		} else if (TEST == 51) { // Structure Test benste
+			String path1 = "TestFiles" + File.separator
+					+ "01 - SmallSample.java";
+			test = new TextSplitter(path1);
+			test.structureCode();
+		}
 
-		/* TextSplitter Testing Part */
-		String path1 = "TestFiles"+File.separator+"01 - SmallSample.java";
-		String path2 = "TestFiles"+File.separator+"03d - SmallSampleCOMMENT.java";
-		TextSplitter test = new TextSplitter(path2);
-		//test.structureCode();
-		System.out.println(test.curlyCountLeveled());
-		/* TextSplitter Testing Part END*/
+		else {
+			System.out.println("No test selected");
+		}
 
 	}
 
