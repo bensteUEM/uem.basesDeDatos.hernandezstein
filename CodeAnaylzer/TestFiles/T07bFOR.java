@@ -4,7 +4,7 @@
  *
  */
 public class T07bFOR {
-	public void nameOfFunction(Integer arg0){
+	private void nameOfFunction(Integer arg0){
 		String inFunction = "";
 		for (int counter = 0; counter<5; counter++){
 			String inFor = "?";

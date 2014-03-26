@@ -38,10 +38,11 @@ import com.sun.source.util.Trees;
 public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	TreePath path;
-	DataInformation d = new DataInformation();
+	
 
 	@Override
 	public Object visitClass(ClassTree classTree, Trees trees) {
+		DataInformation d = new DataInformation();
 		System.out.println("\n== This is a visited class");
 
 		// classTree.ge
@@ -63,21 +64,26 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		d.setName(classTree.getSimpleName().toString());
 		d.setDatatype(classTree.getKind().toString());
 		d.setModifiers(classTree.getModifiers().toString());
-
-		// Scope
-		// ModifiersTree mods = genericTree.getModifiers();
-		// if (((String) mods).contains(Modifier.PRIVATE)) {
-		// scope = (".");
-		// }
-		// genericTree.getPath();
-
-		d.setScope("*");
-		// (mods.contains(Modifier.PUBLIC) ||
-		// mods.contains(Modifier.PROTECTED))
-
+		
 		// others
 		d.setParameters(classTree.getModifiers().toString());
 
+		/*
+		 * Scope of classes
+		 * 
+		 * local scope = enclosing class w/o own name (split by .)
+		 * 
+		 *  if 		 *  PUBLIC = parent scope = OR if no parent = File
+		 * else if PRIVATE ? scope = local scope
+		 * else if n/a scope =  local scope + packages
+		 * else if PROTECTED  scope = local scope + package + subclass)
+		 * 
+		 * final //TODO not included in this version
+		 * 
+		 */
+		
+		
+		
 		System.out.println(d.toString(""));
 
 		return super.visitClass(classTree, trees);
@@ -85,8 +91,27 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	@Override
 	public Object visitMethod(MethodTree methodTree, Trees trees) {
+		DataInformation d = new DataInformation();
 		System.out.println("\n== This is a visited method");
 
+		/*
+		 * Scope of methods
+		 * 
+		 * local scope = if exists enclosing method otherwise enclosing class
+		 * 
+		 *  if 		 *  PUBLIC = parent scope
+		 * else if PRIVATE ? scope = local scope
+		 * else if n/a scope =  local scope + packages
+		 * else if PROTECTED  scope = local scope + package + subclass)
+		 * 
+		 * 
+		 * Class Methods have keyword static
+		 * otherwise they're just methods
+		 * 
+		 * final //TODO not included in this version
+		 * 
+		 */
+		
 		path = getCurrentPath();
 		System.out.println("path is: " + path);
 		Scope scope = trees.getScope(path);
@@ -116,23 +141,52 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	@Override
 	public Object visitVariable(VariableTree variableTree, Trees trees) {
+		DataInformation d = new DataInformation();
 		System.out.println("\n== This is a visited variable");
 
-		
-		
 		path = getCurrentPath();
 		System.out.println("path is: " + path);
 		Scope scope = trees.getScope(path);
 		System.out.println("Scope All: " + scope.toString());
 		System.out.println("Scope Enclosing Class: "
 				+ scope.getEnclosingClass().toString());
+		if (scope.getEnclosingMethod() != null) {
+			System.out.println("Scope Enclosing Method: "
+					+ scope.getEnclosingMethod().toString());
+		}
+
+		// TODO
+		/*
+		 * 4 Variable Cases
+		 * 
+		 * = Local Variable scope.getEnclosingScope() != null
+		 * 
+		 * ==Parameters 
+		 * parent DataInformation has .getParameters().contains(varname)
+		 * *  
+		 * {
+		 * 
+		 * =Instance Variable (Non-Static Field) scope.getEnclosingScope() ==
+		 * null && getModifiers() != static
+		 * 
+		 * =Class Variable (Static Field) scope.getEnclosingScope() == null &&
+		 * getModifiers() == static
+		 * 
+		 * =CONSTANT = getModifiers() == final
+		 * 
+		 * }
+		 * 
+		 * 	if 	 PUBLIC = parent scope
+		 * else if PRIVATE ? scope = enclosing class as scope
+		 * else if n/a scope =  enclosing class as scope + package
+		 * else if PROTECTED  scope = enclosing class as scope + package + subclass)
+		 */
+
 		// System.out.println("Scope enclosing method: "+scope.getEnclosingMethod().toString());
 		System.out.println("Scope enclosing"
 				+ scope.getEnclosingScope().toString());
 		// System.out.println("Scope local elements"+scope.getLocalElements().toString());
 
-		
-		
 		d.setName(variableTree.getName().toString());
 		d.setDatatype(variableTree.getKind().toString());
 		d.setModifiers(variableTree.getModifiers().toString());
