@@ -33,9 +33,11 @@ public class TestingCli {
 		System.out.println(test.curlyCountLeveled());
 		 TextSplitter Testing Part END 
 		 */
-		String path1 = "TestFiles" + File.separator + "T07aNested.java";
+		String path1 = "TestFiles" + File.separator + "T05dMethod.java";
+		String path2 = "TestFiles" + File.separator + "T07bFOR.java";
+		String path3 = "TestFiles" + File.separator + "T07cNested.java";
 		ArrayList<String> paths = new ArrayList(0);
-		paths.add(path1);
+		paths.add(path3);
 		
 		// Code Anaylzer Process ...
 		//Get an instance of java compiler
