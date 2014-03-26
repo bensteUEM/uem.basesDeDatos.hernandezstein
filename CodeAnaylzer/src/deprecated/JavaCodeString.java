@@ -1,3 +1,5 @@
+package deprecated;
+
 public class JavaCodeString implements JavaStructure {
 	private String text = "";
 
