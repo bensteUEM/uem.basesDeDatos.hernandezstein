@@ -3,11 +3,12 @@
 // javac -cp /usr/lib/jvm/NAME OF YOUR JRE/lib/tools.jar Test.java
 
 import javax.lang.model.element.Element;
-
+//http://docs.oracle.com/javase/8/docs/jdk/api/javac/tree/com/sun/source/tree/MethodTree.html
 import com.sun.source.tree.ModifiersTree;
 import com.sun.source.tree.Scope;
 import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
+import com.sun.source.tree.Tree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
@@ -42,8 +43,11 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	@Override
 	public Object visitClass(ClassTree classTree, Trees trees) {
-		DataInformation d = new DataInformation();
 		System.out.println("\n== This is a visited class");
+		
+		DataInformation d = new DataInformation();
+		TreePath path = getCurrentPath();
+		Scope scope = trees.getScope(path);
 
 		// preset for Datatype
 		d.setDatatype(classTree.getKind().toString());
@@ -83,15 +87,18 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	@Override
 	public Object visitMethod(MethodTree methodTree, Trees trees) {
-		DataInformation d = new DataInformation();
 		System.out.println("\n== This is a visited method");
+		
+		DataInformation d = new DataInformation();
+		TreePath path = getCurrentPath();
+		Scope scope = trees.getScope(path);
 
 		// preset for Datatype
 		d.setDatatype(methodTree.getKind().toString());
 		ModifiersTree m = methodTree.getModifiers();
 		// Special Methods called Class Methods
 		if (m.toString().contains("static")) {
-			d.setDatatype("CLASS " + d.getDatatype() + "(Static Method)");
+			d.setDatatype("CLASS " + d.getDatatype() + " (Static Method)");
 		}
 		// Special Methods having final can not be overwritten
 		else if (methodTree.toString().contains("final")) {
@@ -110,7 +117,8 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 		// Check if its a Constructor
 		if(methodTree.getName().toString().equals("<init>")){
-			d.setName(methodTree.getEnclosingClass())
+			d.setName(scope.getEnclosingClass().getSimpleName().toString());
+			d.setDatatype("CONSTRUCTOR " + d.getDatatype());
 		}else {
 			d.setName(methodTree.getName().toString());
 		}
@@ -120,7 +128,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		if (methodTree.getReturnType() != null) {
 			d.setReturnType(methodTree.getReturnType().toString());
 		} else {
-			d.setReturnType("Special Element");
+			d.setReturnType("");
 		}
 
 		// DEBUG printout of element
@@ -131,14 +139,30 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	@Override
 	public Object visitVariable(VariableTree variableTree, Trees trees) {
-		DataInformation d = new DataInformation();
 		System.out.println("\n== This is a visited variable");
 
+		DataInformation d = new DataInformation();
+		TreePath path = getCurrentPath();
+		Scope scope = trees.getScope(path);
+		
+		/*
+		 * EXPERIMENT SCOPE
+		 */
 		path = getCurrentPath();
 		// System.out.println("path is: " + path);
-		Scope scope = trees.getScope(path);
+		
+		
+		scope.getEnclosingMethod();
+		
 		System.out.println(path);
-		System.out.println(path.iterator());
+		Tree item = path.iterator().next();
+		Tree parent = path.iterator().next();
+		System.out.println(item);
+		System.out.println(parent);
+		
+		/*
+		 * EXPERIMENT END
+		 */
 
 		// preset for Datatype
 		d.setDatatype(variableTree.getKind().toString());
@@ -163,13 +187,13 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		// class, furthermore no static modfier
 		else if (!(m.toString().contains("static"))) {
 			// && (scope.getEnclosingMethod() == null) {
-			d.setDatatype("INSTANCE " + d.getDatatype() + "(Non-Static Field)");
+			d.setDatatype("INSTANCE " + d.getDatatype() + " (Non-Static Field)");
 		}
 		// Class Variable (Static Field) = has no enclosing method only a class,
 		// furthermore MUST HAVE static modfier
 		else if (m.toString().contains("static")) {
 			// && (scope.getEnclosingMethod() == null) {
-			d.setDatatype("CLASS " + d.getDatatype() + "(Static Field)");
+			d.setDatatype("CLASS " + d.getDatatype() + " (Static Field)");
 		}
 
 		/*
