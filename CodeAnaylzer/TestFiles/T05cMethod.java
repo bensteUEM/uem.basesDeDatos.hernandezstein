@@ -4,7 +4,7 @@
  * @author benste
  *
  */
-public class SmallSample {
+public class T05cMethod.java {
 	public void nameOfFunction(Integer arg0){
 		System.out.println("something happens here but no variable");
 	}

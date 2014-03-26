@@ -1,5 +1,5 @@
 
-public class SmallSample {
+public class T03bSmallSampleCOMMENT {
  /* this line must be ignored */
 	/*
 	 String DONTSHOW = "if i appear its wrong"; 

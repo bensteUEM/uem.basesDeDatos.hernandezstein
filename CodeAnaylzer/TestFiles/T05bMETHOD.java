@@ -4,6 +4,6 @@
  * @author benste
  *
  */
-public class SmallSample {
+public class T05bMETHOD {
 	public void nameOfFunction(Integer arg0){}
 }

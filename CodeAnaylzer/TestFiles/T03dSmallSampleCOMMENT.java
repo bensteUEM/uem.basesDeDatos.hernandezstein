@@ -4,7 +4,7 @@
  * @author davidh
  *
  */
-public class SmallSample {
+public class T03dSmallSampleCOMMENT {
 	
 	String s = "{{{{";
 	char c = '{';
