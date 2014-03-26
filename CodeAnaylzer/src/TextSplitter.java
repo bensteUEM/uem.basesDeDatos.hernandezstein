@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
+import deprecated.JavaStructure;
+
 /**
  * This class reads a .JAVA file and splits the source code into different
  * logical blocks
@@ -304,4 +306,31 @@ public class TextSplitter {
 
 		return null; // TODO DEBUG
 	}
+	
+	/**
+	 * Method to be used from other classes to append one information object to a storage
+	 * @param oneInformation
+	 * @return success of operation
+	 * @author David
+	 */
+	public static boolean saveToStorage(DataInformation oneInformation){
+		return false;
+		
+	}
+	/**
+	 * Load all saved objects from the storage for usage as objects
+	 * @return ArrayList with DataInformationObjects
+	 */
+	public ArrayList<DataInformation> loadFromStorage(){
+		return null;
+	}
+	/**
+	 * Clears the storage and leaves it empty for the next append to be the first item
+	 * @param oneInformation
+	 * @author David
+	 */
+	public static void clearStorage(DataInformation oneInformation){
+		
+	}
+	
 } // End of the TextSplitter class

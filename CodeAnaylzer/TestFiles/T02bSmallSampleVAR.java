@@ -1,5 +1,5 @@
 
 public class T02bSmallSampleVAR {
-	String textVariable;
-	Integer textVariable;
+	public String textVariable;
+	private Integer numberVariable;
 }

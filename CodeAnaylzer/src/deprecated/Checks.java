@@ -1,3 +1,4 @@
+package deprecated;
 /**
  * This class should provide helping functions to check if a String startswith a
  * group of structure elements
