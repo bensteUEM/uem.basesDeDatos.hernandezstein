@@ -45,29 +45,14 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		DataInformation d = new DataInformation();
 		System.out.println("\n== This is a visited class");
 
-		// classTree.ge
-
-		path = getCurrentPath();
-		System.out.println("path is: " + path);
-		Scope scope = trees.getScope(path);
-		System.out.println("Scope All: " + scope.toString());
-		System.out.println("Scope Enclosing Class: "
-				+ scope.getEnclosingClass().toString());
-		// System.out.println("Scope enclosing method: "+scope.getEnclosingMethod().toString());
-		System.out.println("Scope enclosing"
-				+ scope.getEnclosingScope().toString());
-		// System.out.println("Scope local elements"+scope.getLocalElements().toString());
-
-		d.setScope(scope.getEnclosingScope().toString());
-		System.out.println("finished scope is: " + d.getScope());
-
-		d.setName(classTree.getSimpleName().toString());
+		// preset for Datatype
 		d.setDatatype(classTree.getKind().toString());
-		d.setModifiers(classTree.getModifiers().toString());
+		ModifiersTree m = classTree.getModifiers();
 
-		// others
-		d.setParameters(classTree.getModifiers().toString());
-
+		// Special Methods called Class Methods
+		if (classTree.toString().contains("final")) {
+			// TODO not included in this version
+		}
 		/*
 		 * Scope of classes
 		 * 
@@ -77,9 +62,20 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		 * scope = local scope else if n/a scope = local scope + packages else
 		 * if PROTECTED scope = local scope + package + subclass)
 		 * 
-		 * final //TODO not included in this version
+		 * 
+		 * 
+		 * SCOPE Setting Part
+		 * 
+		 * //d.setScope(scope.getEnclosingScope().toString());
+		 * //System.out.println("finished scope is: " + d.getScope());
 		 */
 
+		d.setName(classTree.getSimpleName().toString());
+		d.setModifiers(classTree.getModifiers().toString());
+		d.setReturnType("n/a");
+		d.setParameters("n/a");
+
+		// DEBUG printout of element
 		System.out.println(d.toString(""));
 
 		return super.visitClass(classTree, trees);
@@ -90,6 +86,18 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		DataInformation d = new DataInformation();
 		System.out.println("\n== This is a visited method");
 
+		// preset for Datatype
+		d.setDatatype(methodTree.getKind().toString());
+		ModifiersTree m = methodTree.getModifiers();
+		// Special Methods called Class Methods
+		if (m.toString().contains("static")) {
+			d.setDatatype("CLASS " + d.getDatatype() + "(Static Method)");
+		}
+		// Special Methods having final can not be overwritten
+		else if (methodTree.toString().contains("final")) {
+			// TODO not included in this version
+		}
+
 		/*
 		 * Scope of methods
 		 * 
@@ -98,36 +106,25 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		 * if * PUBLIC = parent scope else if PRIVATE ? scope = local scope else
 		 * if n/a scope = local scope + packages else if PROTECTED scope = local
 		 * scope + package + subclass)
-		 * 
-		 * 
-		 * Class Methods have keyword static otherwise they're just methods
-		 * 
-		 * final //TODO not included in this version
 		 */
 
-		// path = getCurrentPath();
-		// System.out.println("path is: " + path.getCompilationUnit());
-		// Scope scope = trees.getScope(path);
-		// System.out.println("Scope All: " + scope.toString());
-		// System.out.println("Scope Enclosing Class: "
-		// + scope.getEnclosingClass().toString());
-		// System.out.println("Scope enclosing method: "
-		// + scope.getEnclosingMethod().toString());
-		// System.out.println("Scope enclosing"
-		// + scope.getEnclosingScope().toString());
-		// System.out.println("Scope local elements"+scope.getLocalElements().toString());
-
-		d.setName(methodTree.getName().toString());
-		d.setDatatype(methodTree.getKind().toString());
+		// Check if its a Constructor
+		if(methodTree.getName().toString().equals("<init>")){
+			d.setName(methodTree.getEnclosingClass())
+		}else {
+			d.setName(methodTree.getName().toString());
+		}
+		
 		d.setModifiers(methodTree.getModifiers().toString());
 		d.setParameters(methodTree.getParameters().toString());
 		if (methodTree.getReturnType() != null) {
 			d.setReturnType(methodTree.getReturnType().toString());
-		} else
-			d.setReturnType("");
-		System.out.println(d.toString("\t"));
+		} else {
+			d.setReturnType("Special Element");
+		}
 
-		// System.out.println("Body: "+ methodTree.getBody());
+		// DEBUG printout of element
+		System.out.println(d.toString("\t"));
 
 		return super.visitMethod(methodTree, trees);
 	}
@@ -140,66 +137,61 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		path = getCurrentPath();
 		// System.out.println("path is: " + path);
 		Scope scope = trees.getScope(path);
-
-		// System.out.println("Scope All: " + scope.toString());
-		// System.out.println("Scope Enclosing Class: "
-		// + scope.getEnclosingClass().toString());
-		// if (scope.getEnclosingMethod() != null) {
-		// System.out.println("Scope Enclosing Method: "
-		// + scope.getEnclosingMethod().toString());
-		// }
+		System.out.println(path);
+		System.out.println(path.iterator());
 
 		// preset for Datatype
 		d.setDatatype(variableTree.getKind().toString());
-		ModifiersTree p = variableTree.getModifiers();
-		System.out.println(">>>DEBUG modifier : " + p.toString());
-		System.out.println("public" + p.toString().contains("public"));
-		System.out.println("private" + p.toString().contains("private"));
-		System.out.println("protected" + p.toString().contains("protected"));
+		ModifiersTree m = variableTree.getModifiers();
+
+		// some debugging
+		System.out.println(">>>DEBUG modifier : " + m.toString());
+		System.out.println("public" + m.toString().contains("public"));
+		System.out.println("private" + m.toString().contains("private"));
+		System.out.println("protected" + m.toString().contains("protected"));
 
 		// Local Variables = do always have an enclosing method scope
 		if (scope.getEnclosingMethod() != null) {
 			d.setDatatype("LOCAL " + d.getDatatype());
 		}
 		// Constants always have the "final" keyword and no enclosing method
-		else if (p.toString().contains("final")) {
+		else if (m.toString().contains("final")) {
 			// && (scope.getEnclosingMethod() == null) {
 			d.setDatatype("CONSTANT " + d.getDatatype());
 		}
 		// Instance Variable (Non-Static Field) = has no enclosing method only a
 		// class, furthermore no static modfier
-		else if (!(p.toString().contains("static"))) {
+		else if (!(m.toString().contains("static"))) {
 			// && (scope.getEnclosingMethod() == null) {
-			// TODO
-			System.out.println("TODO, check --- && getModifiers() != static");
 			d.setDatatype("INSTANCE " + d.getDatatype() + "(Non-Static Field)");
 		}
 		// Class Variable (Static Field) = has no enclosing method only a class,
 		// furthermore MUST HAVE static modfier
-		else if (p.toString().contains("static")) {
+		else if (m.toString().contains("static")) {
 			// && (scope.getEnclosingMethod() == null) {
 			d.setDatatype("CLASS " + d.getDatatype() + "(Static Field)");
 		}
+
 		/*
-		 *  ==Parameters parent DataInformation has
+		 * //TODO ==Parameters parent DataInformation has
 		 * .getParameters().contains(varname) * {
 		 * 
 		 * 
+		 * SCOPE ...
 		 * 
-		 * } / * + d.getDatatype() if PUBLIC = parent scope else if PRIVATE ?
-		 * scope = enclosing class as scope else if n/a scope = enclosing class
-		 * as scope + package else if PROTECTED scope = enclosing class as scope
-		 * + package + subclass)
+		 * //TODO } / * + d.getDatatype() if PUBLIC = parent scope else if
+		 * PRIVATE ? scope = enclosing class as scope else if n/a scope =
+		 * enclosing class as scope + package else if PROTECTED scope =
+		 * enclosing class as scope + package + subclass)
 		 */
-
-		// System.out.println("Scope enclosing method: "+scope.getEnclosingMethod().toString());
-		// System.out.println("Scope enclosing"
-		// + scope.getEnclosingScope().toString());
-		// System.out.println("Scope local elements"+scope.getLocalElements().toString());
 
 		d.setName(variableTree.getName().toString());
 		d.setModifiers(variableTree.getModifiers().toString());
-		System.out.println(d.toString("\t\t"));
+		d.setReturnType("n/a");
+		d.setParameters("n/a");
+
+		// DEBUG printout of element
+		System.out.println(d.toString("\t"));
 
 		return super.visitVariable(variableTree, trees);
 	}
