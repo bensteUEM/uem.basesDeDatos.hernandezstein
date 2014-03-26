@@ -1,3 +1,4 @@
+//this project now requires JRE 8 !
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
