@@ -3,11 +3,7 @@ import com.sun.source.tree.ClassTree;
 import com.sun.source.tree.MethodTree;
 import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
-import com.sun.source.util.TreePathScanner
-import com.;
-
-import com.sun.source.util.*;
-
+import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
 
 public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees>  {
