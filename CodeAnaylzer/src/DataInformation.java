@@ -1,3 +1,5 @@
+import javax.lang.model.element.Element;
+
 /**
  * This class can be used to describe one programming element used in any
  * sourcecode part
@@ -14,6 +16,7 @@ public class DataInformation {
 	// optional ones for non Variable Types only
 	private String returnValue;
 	private String parameters;
+	public Element sourceElement;
 
 	// GET and SET methods
 
@@ -62,5 +65,14 @@ public class DataInformation {
 
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
+	}
+
+	public String toString(String tabs) {
+		String text = "";
+		text += ("\n" + tabs + "Element is called: " + this.getName());
+		text += ("\n" + tabs + "Kind of Element is: " + this.getDatatype());
+		text += ("\n" + tabs + "Assumed Scope of Element is: " + this.getScope());
+		text += ("\n" + tabs + "Modifiers are: " + this.getParameters());
+		return text;
 	}
 }

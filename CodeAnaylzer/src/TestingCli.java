@@ -33,7 +33,7 @@ public class TestingCli {
 		System.out.println(test.curlyCountLeveled());
 		 TextSplitter Testing Part END 
 		 */
-		String path1 = "TestFiles" + File.separator + "T02eSmallSampleVAR.java";
+		String path1 = "TestFiles" + File.separator + "T05dMethod.java";
 		ArrayList<String> paths = new ArrayList(0);
 		paths.add(path1);
 		
@@ -57,8 +57,9 @@ public class TestingCli {
 		LinkedList<AbstractProcessor> processors = new LinkedList<AbstractProcessor>();
 
 		// Add an annotation processor to the list
+		//processors.add(new CodeAnalyzerProcessorBENSTE());
 		processors.add(new CodeAnalyzerProcessor());
-
+		
 		// Set the annotation processor to the compiler task
 		task.setProcessors(processors);
 
