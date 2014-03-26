@@ -2,6 +2,8 @@
 // requires JRE JAR file on compile
 // javac -cp /usr/lib/jvm/NAME OF YOUR JRE/lib/tools.jar Test.java
 
+import java.util.List;
+
 import javax.lang.model.element.Element;
 //http://docs.oracle.com/javase/8/docs/jdk/api/javac/tree/com/sun/source/tree/MethodTree.html
 import com.sun.source.tree.ModifiersTree;
@@ -44,7 +46,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	@Override
 	public Object visitClass(ClassTree classTree, Trees trees) {
 		System.out.println("\n== This is a visited class");
-		
+
 		DataInformation d = new DataInformation();
 		TreePath path = getCurrentPath();
 		Scope scope = trees.getScope(path);
@@ -88,7 +90,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	@Override
 	public Object visitMethod(MethodTree methodTree, Trees trees) {
 		System.out.println("\n== This is a visited method");
-		
+
 		DataInformation d = new DataInformation();
 		TreePath path = getCurrentPath();
 		Scope scope = trees.getScope(path);
@@ -116,13 +118,13 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		 */
 
 		// Check if its a Constructor
-		if(methodTree.getName().toString().equals("<init>")){
+		if (methodTree.getName().toString().equals("<init>")) {
 			d.setName(scope.getEnclosingClass().getSimpleName().toString());
 			d.setDatatype("CONSTRUCTOR " + d.getDatatype());
-		}else {
+		} else {
 			d.setName(methodTree.getName().toString());
 		}
-		
+
 		d.setModifiers(methodTree.getModifiers().toString());
 		d.setParameters(methodTree.getParameters().toString());
 		if (methodTree.getReturnType() != null) {
@@ -144,22 +146,17 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		DataInformation d = new DataInformation();
 		TreePath path = getCurrentPath();
 		Scope scope = trees.getScope(path);
-		
+
 		/*
 		 * EXPERIMENT SCOPE
 		 */
+
+		System.out.println("=========BEGIN TEST ==========");
 		path = getCurrentPath();
-		// System.out.println("path is: " + path);
-		
-		
-		scope.getEnclosingMethod();
-		
-		System.out.println(path);
-		Tree item = path.iterator().next();
-		Tree parent = path.iterator().next();
-		System.out.println(item);
-		System.out.println(parent);
-		
+
+		System.out.println("Suspected Parent is: " + getParentName());
+
+		System.out.println("=========END TEST ==========");
 		/*
 		 * EXPERIMENT END
 		 */
@@ -218,5 +215,70 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		System.out.println(d.toString("\t"));
 
 		return super.visitVariable(variableTree, trees);
+	}
+
+	/**
+	 * Simplified method to get the parent's readable name
+	 * 
+	 * @return name of method or class
+	 * @author benste
+	 */
+	public String getParentName() {
+		if (getParentMethod() != null) {
+			return getParentMethod().getName().toString();
+		} else if (getParentMethod() != null) {
+			return getParentClass().getSimpleName().toString();
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * Helper method to safely get a MethodTree casted parent Element of the
+	 * current one
+	 * 
+	 * @return null (if parent is not a Method) || MethodTree which is the
+	 *         parent
+	 * @author benste
+	 */
+	public MethodTree getParentMethod() {
+		try {
+			MethodTree test = (MethodTree) getCurrentPath().getParentPath()
+					.getParentPath().getLeaf();
+			return test;
+		} catch (java.lang.ClassCastException e1) {
+			System.out
+					.println("Class Cast Exception (not MethodTree or ClassTree) "
+							+ e1);
+		} catch (Exception e1) {
+			System.out.println("Other issue when trying to cast to Method "
+					+ e1);
+		}
+		return null;
+	}
+
+	/**
+	 * Helper method to safely get a ClassTree casted parent Element of the
+	 * current one
+	 * 
+	 * @return null (if parent is not a Class) || ClassTree which is the parent
+	 * @author benste
+	 */
+	public ClassTree getParentClass() {
+		try {
+			ClassTree test = (ClassTree) getCurrentPath().getParentPath()
+					.getParentPath().getLeaf();
+			return test;
+		} catch (java.lang.ClassCastException e1) {
+			System.out
+					.println("Class Cast Exception (not MethodTree or ClassTree)\n "
+							+ e1);
+			System.out.println( getCurrentPath().getParentPath()
+					.getParentPath().getLeaf().getClass());
+		} catch (Exception e1) {
+			System.out.println("Other issue when trying to cast to Method "
+					+ e1);
+		}
+		return null;
 	}
 }
