@@ -8,15 +8,16 @@ import javax.lang.model.element.Element;
  * 
  */
 public class DataInformation {
-	private String name;
-	private String scope;
-	private String datatype;
+	private String name = "";
+	private String scope = "";
+	private String datatype = "";
 	// private String initValue; //additional Function not needed in rev 1
 
 	// optional ones for non Variable Types only
-	private String returnValue;
-	private String parameters;
-	public Element sourceElement;
+	private String returnValue = "";
+	private String parameters = "";
+	public Element sourceElement = null;
+	private String modifier= "";
 
 	// GET and SET methods
 
@@ -51,11 +52,11 @@ public class DataInformation {
 		this.datatype = datatype;
 	}
 
-	public String getReturnValue() {
+	public String getReturnType() {
 		return returnValue;
 	}
 
-	public void setReturnValue(String returnValue) {
+	public void setReturnType(String returnValue) {
 		this.returnValue = returnValue;
 	}
 
@@ -66,13 +67,26 @@ public class DataInformation {
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
 	}
+	
+	public String getModifiers() {
+		return this.modifier;
+	}
+	
+	public void setModifiers(String modifier) {
+		this.modifier = modifier;
+	}
 
 	public String toString(String tabs) {
 		String text = "";
 		text += ("\n" + tabs + "Element is called: " + this.getName());
 		text += ("\n" + tabs + "Kind of Element is: " + this.getDatatype());
 		text += ("\n" + tabs + "Assumed Scope of Element is: " + this.getScope());
-		text += ("\n" + tabs + "Modifiers are: " + this.getParameters());
+		text += ("\n" + tabs + "Modifiers are: " + this.getModifiers());
+		text += ("\n" + tabs + "Return Value is: " + this.getReturnType());
+		text += ("\n" + tabs + "Parameters are: " + this.getParameters());
+		
 		return text;
 	}
+
+
 }

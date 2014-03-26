@@ -33,7 +33,7 @@ public class TestingCli {
 		System.out.println(test.curlyCountLeveled());
 		 TextSplitter Testing Part END 
 		 */
-		String path1 = "TestFiles" + File.separator + "T05dMethod.java";
+		String path1 = "TestFiles" + File.separator + "T07aNested.java";
 		ArrayList<String> paths = new ArrayList(0);
 		paths.add(path1);
 		
