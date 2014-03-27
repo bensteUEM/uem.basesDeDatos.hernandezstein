@@ -38,7 +38,7 @@ public class TestingCli {
 		String path3 = "TestFiles" + File.separator + "T08bpackage.java";
 		String path4 = "TestFiles" + File.separator + "T08aTry.java";
 		ArrayList<String> paths = new ArrayList(0);
-		paths.add(path4);
+		paths.add(path1);
 		
 		// Code Anaylzer Process ...
 		//Get an instance of java compiler

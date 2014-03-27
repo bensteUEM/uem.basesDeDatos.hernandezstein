@@ -59,27 +59,15 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		if (classTree.toString().contains("final")) {
 			// TODO not included in this version
 		}
-		/*
-		 * Scope of classes
-		 * 
-		 * local scope = enclosing class w/o own name (split by .)
-		 * 
-		 * if * PUBLIC = parent scope = OR if no parent = File else if PRIVATE ?
-		 * scope = local scope else if n/a scope = local scope + packages else
-		 * if PROTECTED scope = local scope + package + subclass)
-		 * 
-		 * 
-		 * 
-		 * SCOPE Setting Part
-		 * 
-		 * //d.setScope(scope.getEnclosingScope().toString());
-		 * //System.out.println("finished scope is: " + d.getScope());
-		 */
-
 		d.setName(classTree.getSimpleName().toString());
 		d.setModifiers(classTree.getModifiers().toString());
 		d.setReturnType("n/a");
 		d.setParameters("n/a");
+		
+		/*
+		 * SCOPE ...
+		 */
+		d.setScope(generateTextScope(m, d));
 
 		// DEBUG printout of element
 		System.out.println(d.toString(""));
@@ -108,14 +96,9 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		}
 
 		/*
-		 * Scope of methods
-		 * 
-		 * local scope = if exists enclosing method otherwise enclosing class
-		 * 
-		 * if * PUBLIC = parent scope else if PRIVATE ? scope = local scope else
-		 * if n/a scope = local scope + packages else if PROTECTED scope = local
-		 * scope + package + subclass)
+		 * SCOPE ...
 		 */
+		d.setScope(generateTextScope(m, d));
 
 		// Check if its a Constructor
 		if (methodTree.getName().toString().equals("<init>")) {
@@ -150,7 +133,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 		/*
 		 * DATA Types
-		*/
+		 */
 
 		// preset for Datatype
 		d.setDatatype(variableTree.getKind().toString());
@@ -211,31 +194,8 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		/*
 		 * SCOPE ...
 		 */
-		String parentScope = "?PARENT?"; // TODO
-		String localScope = "?LOCAL?"; // TODO
-
-		System.out.println("MODS are: "+m.toString());
 		
-		// PUBLIC => use parent scope
-		if (m.toString().contains("public")) {
-			d.setScope(parentScope);
-		}
-		// PRIVATE => use local scope (method or class)
-		else if (m.toString().contains("private")) {
-			d.setScope(localScope);
-		}
-		// PROTECTED => use local scope + package
-		else if (m.toString().contains("protected")) {
-			d.setScope(localScope + " + Package");
-		}
-		// if not any of those three modifier => use local scope + package +
-		// subclass
-		else {
-			// in case its not a parameter set a scope			
-			if (!(d.getDatatype().startsWith("PARAMETER"))&& !(d.getDatatype().startsWith("LOCAL"))){
-				d.setScope(localScope + " + Package + SubClass");
-			}
-		}
+		d.setScope(generateTextScope(m, d));
 		
 		/*
 		 * Other Fields
@@ -264,12 +224,16 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 * @author benste
 	 */
 	public String getParentName() {
+		// TODO this is not correct because method parameters seem to have
+		// their class as parent
+		// System.out.println("WARNING - TODO - if Parameter parent might be wrong => scope too wide too");
+		
 		if (getParentMethod() != null) {
 			return getParentMethod().getName().toString();
 		} else if (getParentClass() != null) {
 			return getParentClass().getSimpleName().toString();
 		} else {
-			return null;
+			return "";
 		}
 	}
 
@@ -338,5 +302,66 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 			 */
 		}
 		return null;
+	}
+
+	/**
+	 * Custom function to determine the scope modification caused by modifiers
+	 * 
+	 * @param m
+	 *            all Modifiers which exist at this stage
+	 * @param d
+	 *            all the information collected about the Object up to now
+	 * @return Scope Description
+	 * @author benste
+	 */
+	public String generateTextScope(ModifiersTree m, DataInformation d) {
+		/*
+		 * SCOPE ...
+		 */
+		String parentScope = "?PARENT?"; // TODO
+		String localScope = "?LOCAL?"; // TODO
+		String result = "UNKNOWN SCOPE CASE";
+
+		// PUBLIC => use parent scope
+		if (m.toString().contains("public")) {
+			result = parentScope;
+		}
+		// PRIVATE => use local scope (method or class)
+		else if (m.toString().contains("private")) {
+			result = localScope;
+		}
+		// PROTECTED => use local scope + package
+		else if (m.toString().contains("protected")) {
+			result = localScope + " + Package";
+		}
+		// if not any of those three modifier and neither a Parameter or Local
+		// Variable
+		// => use local scope + package + subclass
+		else if (!(d.getDatatype().startsWith("PARAMETER"))
+				&& !(d.getDatatype().startsWith("LOCAL"))) {
+			result = localScope + " + Package + SubClass";
+		}
+		// Variables which have no modifiers - Local = have their parent method
+		// / class as scope
+		else if (d.getDatatype().startsWith("LOCAL")) {
+			if (!(getParentName().equals(""))) {
+				result = getParentName();
+			} else {
+				System.out.println("LOCAL var without ParentName");
+			}
+		}
+		// Variables which have no modifiers can be Local or Parameter. => both
+		// have their parent method / class as scope
+		else if (d.getDatatype().startsWith("PARAMETER")) {
+			if (!(getParentName().equals(""))) {
+				result = getParentName();
+				System.out.println("PARAMETER + Parent in Scope helper method is: <"
+						+ getParentName() + ">");
+			} else {
+				System.out.println("PARAMETER var without ParentName");
+			}
+		}
+
+		return result;
 	}
 }
