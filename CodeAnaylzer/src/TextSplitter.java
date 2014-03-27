@@ -320,12 +320,12 @@ public class TextSplitter {
 	 * @author David
 	 */
 	public static boolean saveToStorage(DataInformation oneInformation){
-		final String FILE_PATH = "files/dataInfo.dat"; 
+		final String FILE_PATH = "files"+File.separator+"dataInfo.dat"; 
 		try{
 			FileOutputStream fos = new FileOutputStream(FILE_PATH);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(oneInformation);
-			oos.reset();
+			//oos.reset();
 			oos.close();
 			fos.close();
 			return true;
@@ -338,19 +338,18 @@ public class TextSplitter {
 	/**
 	 * Load all saved objects from the storage for usage as objects
 	 * @return ArrayList with DataInformationObjects
+	 * @author David
 	 */
 	public ArrayList<DataInformation> loadFromStorage(){
 		final String FILE_PATH = "files/dataInfo.dat";
-		ArrayList<DataInformation> list = new ArrayList<DataInformation>();
+		ArrayList<DataInformation> list = new ArrayList<DataInformation>(0);
 		try{
 			FileInputStream fis = new FileInputStream(FILE_PATH);
 			ObjectInputStream ois = new ObjectInputStream(fis);
 
-			// Reads First object
-			Object aux = ois.readObject();
-
 			// Reads rest
-			while (aux != null) {
+			Object aux = null;
+			while ((aux = ois.readObject()) != null) {
 				if (aux instanceof DataInformation) {
 					list.add((DataInformation) aux);
 					aux = ois.readObject();
@@ -368,10 +367,9 @@ public class TextSplitter {
 	}
 	/**
 	 * Clears the storage and leaves it empty for the next append to be the first item
-	 * @param oneInformation
 	 * @author David
 	 */
-	public static void clearStorage(DataInformation oneInformation){
+	public static void clearStorage(){
 		try{
 			final String FILE_PATH = "files/dataInfo.dat";
 			FileWriter fw = new FileWriter(FILE_PATH); // Content will be overwritten
