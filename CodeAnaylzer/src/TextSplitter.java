@@ -322,7 +322,7 @@ public class TextSplitter {
 	public static boolean saveToStorage(DataInformation oneInformation){
 		final String FILE_PATH = "files/dataInfo.dat"; 
 		try{
-			FileOutputStream fos = new FileOutputStream(FILE_PATH);
+			FileOutputStream fos = new FileOutputStream(FILE_PATH, true);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(oneInformation);
 			oos.reset();
