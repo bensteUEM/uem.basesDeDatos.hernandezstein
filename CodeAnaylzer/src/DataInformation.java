@@ -78,12 +78,12 @@ public class DataInformation {
 
 	public String toString(String tabs) {
 		String text = "";
-		text += ("\n" + tabs + "Element is called: " + this.getName());
-		text += ("\n" + tabs + "Kind of Element is: " + this.getDatatype());
-		text += ("\n" + tabs + "Assumed Scope of Element is: " + this.getScope());
-		text += ("\n" + tabs + "Modifiers are: " + this.getModifiers());
-		text += ("\n" + tabs + "Return Value is: " + this.getReturnType());
-		text += ("\n" + tabs + "Parameters are: " + this.getParameters());
+		text += ("\n" + tabs + "Element is called \t" + this.getName());
+		text += ("\n" + tabs + "Kind of Element is: \t" + this.getDatatype());
+		text += ("\n" + tabs + "Scope of Element is: \t" + this.getScope());
+		text += ("\n" + tabs + "Modifiers are: \t\t" + this.getModifiers());
+		text += ("\n" + tabs + "Return Value is: \t" + this.getReturnType());
+		text += ("\n" + tabs + "Parameters are: \t" + this.getParameters());
 		
 		return text;
 	}

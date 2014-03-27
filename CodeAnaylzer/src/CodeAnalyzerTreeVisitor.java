@@ -176,38 +176,51 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		if ((scope.getEnclosingMethod() != null) && (m.toString().isEmpty())) {
 			d.setDatatype("LOCAL " + d.getDatatype());
 			d.setScope(getParentName());
-		}
+		} // end local var
+
 		// Constants always have the "final" keyword and no enclosing method
 		else if (m.toString().contains("final")) {
 			// && (scope.getEnclosingMethod() == null) {
 			d.setDatatype("CONSTANT " + d.getDatatype());
-		}
+		}// / end Constant
+
 		// Instance Variable (Non-Static Field) = has no enclosing method only a
 		// class, furthermore no static modfier
 		else if (!(m.toString().contains("static"))) {
 			// && (scope.getEnclosingMethod() == null) {
 			d.setDatatype("INSTANCE " + d.getDatatype() + " (Non-Static Field)");
-		}
+		} // end Var non Static
+
 		// Class Variable (Static Field) = has no enclosing method only a class,
 		// furthermore MUST HAVE static modfier
 		else if (m.toString().contains("static")) {
 			// && (scope.getEnclosingMethod() == null) {
 			d.setDatatype("CLASS " + d.getDatatype() + " (Static Field)");
-		}
-		// Parameter = parent Method contains this items name as parameter
-		if (getParentName() != null) { // TODO this needs to be checked ones
-											// the arguments are having a parent
-			
-			// TODO why is the PARENT not null, but the ParentMethod is null even though the parent should be a method ... or is it the class ???
-			// PARENT seems to be a class thats why ..
-			System.out.println("IS PART OF METHOD? "+getParentMethod().getParameters().contains(
-					variableTree.getName()));
-			if (getParentMethod().getParameters().contains(
-					variableTree.getName())) {
-				d.setDatatype("PARAMETER");
-			}
+		} // end class static
 
-		}
+		// Parameter = parent Method contains this items name as parameter
+		if (getParentClass() != null) { // check safe to have a parent class
+										// available
+			for (Tree leaf : getParentClass().getMembers()) { // get all members
+																// of the
+																// enclosing
+																// class
+				if (getMethod(leaf) != null) { // only for leafs which are
+												// Methods
+					MethodTree parent = getMethod(leaf);
+					if (parent.getParameters().toString()
+							.contains(variableTree.getName().toString())) {
+						d.setDatatype("PARAMETER of Method "
+								+ parent.getName().toString());
+						d.setScope(parent.getName().toString());
+						// TODO this will only set the last method, if multiple functions use the var there needs to be a var which counts the objects 
+						// TODO get full name of function incl. path
+						System.out.println("VAR IS PARAMETER of method "
+								+ parent.getName().toString());
+					}
+				}
+			}
+		} // end Parameter check part
 		/*
 		 * SCOPE ...
 		 * 
@@ -251,18 +264,15 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	}
 
 	/**
-	 * Helper method to safely get a MethodTree casted parent Element of the
-	 * current one
+	 * Helper method to safely get a MethodTree casted from the passed object
 	 * 
-	 * @return null (if parent is not a Method) || MethodTree which is the
-	 *         parent
+	 * @return null (if parent is not a Method) || MethodTree object
 	 * @author benste
 	 */
-	public MethodTree getParentMethod() {
+	public MethodTree getMethod(Tree anyTree) {
 		// System.out.println("EXPERIMENTAL getParentMETHOD");
 		try {
-			MethodTree test = (MethodTree) getCurrentPath().getParentPath()
-					.getParentPath().getLeaf();
+			MethodTree test = (MethodTree) anyTree;
 			return test;
 		} catch (java.lang.ClassCastException e1) {
 			/*
@@ -276,6 +286,19 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 			 */
 		}
 		return null;
+	}
+
+	/**
+	 * Helper method to safely get a MethodTree casted parent Element of the
+	 * current one
+	 * 
+	 * @return null (if parent is not a Method) || MethodTree which is the
+	 *         parent
+	 * @author benste
+	 */
+	public MethodTree getParentMethod() {
+		return getMethod(getCurrentPath().getParentPath().getParentPath()
+				.getLeaf());
 	}
 
 	/**
