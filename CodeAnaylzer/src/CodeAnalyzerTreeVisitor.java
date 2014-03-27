@@ -154,7 +154,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		System.out.println("=========BEGIN TEST ==========");
 		path = getCurrentPath();
 
-		System.out.println("Suspected Parent is: " + getParentName());
+		System.out.println("Suspected Parent is called: " + getParentName());
 
 		System.out.println("=========END TEST ==========");
 		/*
@@ -167,13 +167,15 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 		// some debugging
 		System.out.println(">>>DEBUG modifier : " + m.toString());
-		System.out.println("public" + m.toString().contains("public"));
-		System.out.println("private" + m.toString().contains("private"));
-		System.out.println("protected" + m.toString().contains("protected"));
+		System.out.println("public \t\t" + m.toString().contains("public"));
+		System.out.println("private \t" + m.toString().contains("private"));
+		System.out.println("protected \t" + m.toString().contains("protected"));
 
-		// Local Variables = do always have an enclosing method scope
-		if (scope.getEnclosingMethod() != null) {
+		// Local Variables = do always have an enclosing method scope and no
+		// other arguments, furthermore their scope is limited to their function
+		if ((scope.getEnclosingMethod() != null) && (m.toString().isEmpty())) {
 			d.setDatatype("LOCAL " + d.getDatatype());
+			d.setScope(getParentName());
 		}
 		// Constants always have the "final" keyword and no enclosing method
 		else if (m.toString().contains("final")) {
@@ -192,12 +194,21 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 			// && (scope.getEnclosingMethod() == null) {
 			d.setDatatype("CLASS " + d.getDatatype() + " (Static Field)");
 		}
+		// Parameter = parent Method contains this items name as parameter
+		if (getParentName() != null) { // TODO this needs to be checked ones
+											// the arguments are having a parent
+			
+			// TODO why is the PARENT not null, but the ParentMethod is null even though the parent should be a method ... or is it the class ???
+			// PARENT seems to be a class thats why ..
+			System.out.println("IS PART OF METHOD? "+getParentMethod().getParameters().contains(
+					variableTree.getName()));
+			if (getParentMethod().getParameters().contains(
+					variableTree.getName())) {
+				d.setDatatype("PARAMETER");
+			}
 
+		}
 		/*
-		 * //TODO ==Parameters parent DataInformation has
-		 * .getParameters().contains(varname) * {
-		 * 
-		 * 
 		 * SCOPE ...
 		 * 
 		 * //TODO } / * + d.getDatatype() if PUBLIC = parent scope else if
@@ -217,6 +228,12 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		return super.visitVariable(variableTree, trees);
 	}
 
+	/*
+	 * =====================================================================
+	 * HELPER METHODS
+	 * =====================================================================
+	 */
+
 	/**
 	 * Simplified method to get the parent's readable name
 	 * 
@@ -226,7 +243,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	public String getParentName() {
 		if (getParentMethod() != null) {
 			return getParentMethod().getName().toString();
-		} else if (getParentMethod() != null) {
+		} else if (getParentClass() != null) {
 			return getParentClass().getSimpleName().toString();
 		} else {
 			return null;
@@ -242,17 +259,21 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 * @author benste
 	 */
 	public MethodTree getParentMethod() {
+		// System.out.println("EXPERIMENTAL getParentMETHOD");
 		try {
 			MethodTree test = (MethodTree) getCurrentPath().getParentPath()
 					.getParentPath().getLeaf();
 			return test;
 		} catch (java.lang.ClassCastException e1) {
-			System.out
-					.println("Class Cast Exception (not MethodTree or ClassTree) "
-							+ e1);
+			/*
+			 * System.out .println("Class Cast Exception (not MethodTree) " +
+			 * e1);
+			 */
 		} catch (Exception e1) {
-			System.out.println("Other issue when trying to cast to Method "
-					+ e1);
+			/*
+			 * System.out.println("Other issue when trying to cast to Method " +
+			 * e1);
+			 */
 		}
 		return null;
 	}
@@ -265,19 +286,23 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 * @author benste
 	 */
 	public ClassTree getParentClass() {
+		// System.out.println("EXPERIMENTAL getParentClass");
 		try {
 			ClassTree test = (ClassTree) getCurrentPath().getParentPath()
 					.getParentPath().getLeaf();
 			return test;
 		} catch (java.lang.ClassCastException e1) {
-			System.out
-					.println("Class Cast Exception (not MethodTree or ClassTree)\n "
-							+ e1);
-			System.out.println( getCurrentPath().getParentPath()
-					.getParentPath().getLeaf().getClass());
+			/*
+			 * System.out .println("Class Cast Exception (not ClassTree)\n " +
+			 * e1);
+			 * System.out.println(getCurrentPath().getParentPath().getParentPath
+			 * () .getLeaf().getClass());
+			 */
 		} catch (Exception e1) {
-			System.out.println("Other issue when trying to cast to Method "
-					+ e1);
+			/*
+			 * System.out.println("Other issue when trying to cast to Method " +
+			 * e1);
+			 */
 		}
 		return null;
 	}
