@@ -1,8 +1,14 @@
 import java.awt.List;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -314,15 +320,51 @@ public class TextSplitter {
 	 * @author David
 	 */
 	public static boolean saveToStorage(DataInformation oneInformation){
-		return false;
-		
+		final String FILE_PATH = "files/dataInfo.dat"; 
+		try{
+			FileOutputStream fos = new FileOutputStream(FILE_PATH);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(oneInformation);
+			oos.reset();
+			oos.close();
+			fos.close();
+			return true;
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}
 	}
 	/**
 	 * Load all saved objects from the storage for usage as objects
 	 * @return ArrayList with DataInformationObjects
 	 */
 	public ArrayList<DataInformation> loadFromStorage(){
-		return null;
+		final String FILE_PATH = "files/dataInfo.dat";
+		ArrayList<DataInformation> list = new ArrayList<DataInformation>();
+		try{
+			FileInputStream fis = new FileInputStream(FILE_PATH);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+
+			// Reads First object
+			Object aux = ois.readObject();
+
+			// Reads rest
+			while (aux != null) {
+				if (aux instanceof DataInformation) {
+					list.add((DataInformation) aux);
+					aux = ois.readObject();
+				}
+			}
+			ois.close();
+			fis.close();
+			return list;
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			return null;
+		}
+		
 	}
 	/**
 	 * Clears the storage and leaves it empty for the next append to be the first item
@@ -330,7 +372,19 @@ public class TextSplitter {
 	 * @author David
 	 */
 	public static void clearStorage(DataInformation oneInformation){
-		
+		try{
+			final String FILE_PATH = "files/dataInfo.dat";
+			FileWriter fw = new FileWriter(FILE_PATH); // Content will be overwritten
+			BufferedWriter bw = new BufferedWriter(fw); // Writes inside file using a buffer
+
+			bw.write("");
+
+			bw.close();
+			fw.close();
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
 	}
 	
 } // End of the TextSplitter class
