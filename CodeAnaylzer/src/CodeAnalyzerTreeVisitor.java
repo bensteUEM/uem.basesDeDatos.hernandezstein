@@ -146,30 +146,14 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		DataInformation d = new DataInformation();
 		TreePath path = getCurrentPath();
 		Scope scope = trees.getScope(path);
+		ModifiersTree m = variableTree.getModifiers();
 
 		/*
-		 * EXPERIMENT SCOPE
-		 */
-
-		System.out.println("=========BEGIN TEST ==========");
-		path = getCurrentPath();
-
-		System.out.println("Suspected Parent is called: " + getParentName());
-
-		System.out.println("=========END TEST ==========");
-		/*
-		 * EXPERIMENT END
-		 */
+		 * DATA Types
+		*/
 
 		// preset for Datatype
 		d.setDatatype(variableTree.getKind().toString());
-		ModifiersTree m = variableTree.getModifiers();
-
-		// some debugging
-		System.out.println(">>>DEBUG modifier : " + m.toString());
-		System.out.println("public \t\t" + m.toString().contains("public"));
-		System.out.println("private \t" + m.toString().contains("private"));
-		System.out.println("protected \t" + m.toString().contains("protected"));
 
 		// Local Variables = do always have an enclosing method scope and no
 		// other arguments, furthermore their scope is limited to their function
@@ -213,7 +197,9 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 						d.setDatatype("PARAMETER of Method "
 								+ parent.getName().toString());
 						d.setScope(parent.getName().toString());
-						// TODO this will only set the last method, if multiple functions use the var there needs to be a var which counts the objects 
+						// TODO this will only set the last method, if multiple
+						// functions use the var there needs to be a var which
+						// counts the objects
 						// TODO get full name of function incl. path
 						System.out.println("VAR IS PARAMETER of method "
 								+ parent.getName().toString());
@@ -221,15 +207,39 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 				}
 			}
 		} // end Parameter check part
+
 		/*
 		 * SCOPE ...
-		 * 
-		 * //TODO } / * + d.getDatatype() if PUBLIC = parent scope else if
-		 * PRIVATE ? scope = enclosing class as scope else if n/a scope =
-		 * enclosing class as scope + package else if PROTECTED scope =
-		 * enclosing class as scope + package + subclass)
 		 */
+		String parentScope = "?PARENT?"; // TODO
+		String localScope = "?LOCAL?"; // TODO
 
+		System.out.println("MODS are: "+m.toString());
+		
+		// PUBLIC => use parent scope
+		if (m.toString().contains("public")) {
+			d.setScope(parentScope);
+		}
+		// PRIVATE => use local scope (method or class)
+		else if (m.toString().contains("private")) {
+			d.setScope(localScope);
+		}
+		// PROTECTED => use local scope + package
+		else if (m.toString().contains("protected")) {
+			d.setScope(localScope + " + Package");
+		}
+		// if not any of those three modifier => use local scope + package +
+		// subclass
+		else {
+			// in case its not a parameter set a scope			
+			if (!(d.getDatatype().startsWith("PARAMETER"))){
+				d.setScope(localScope + " + Package + SubClass");
+			}
+		}
+		
+		/*
+		 * Other Fields
+		 */
 		d.setName(variableTree.getName().toString());
 		d.setModifiers(variableTree.getModifiers().toString());
 		d.setReturnType("n/a");
