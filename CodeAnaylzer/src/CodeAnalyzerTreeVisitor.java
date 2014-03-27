@@ -232,7 +232,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		// subclass
 		else {
 			// in case its not a parameter set a scope			
-			if (!(d.getDatatype().startsWith("PARAMETER"))){
+			if (!(d.getDatatype().startsWith("PARAMETER"))&& !(d.getDatatype().startsWith("LOCAL"))){
 				d.setScope(localScope + " + Package + SubClass");
 			}
 		}
