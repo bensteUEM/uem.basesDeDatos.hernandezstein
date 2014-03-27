@@ -1,4 +1,8 @@
+# Compiled Classes #
 *.class
+
+# Java Settings #
+.classpath
 
 # Package Files #
 *.jar
