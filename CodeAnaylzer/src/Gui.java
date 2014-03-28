@@ -12,15 +12,16 @@ import java.io.File;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 /**
  * This class will implement the GUI functionalities include Loading a File
  * Searching for all occurrences of one Analyzed Item in a List
  * 
- * @author tbd
+ * @author David
  * 
  */
 public class Gui extends JFrame {
@@ -28,7 +29,7 @@ public class Gui extends JFrame {
 	private JButton jbBrowse;
 	private JTextField jtfSearch;
 	private JButton jbSearch;
-	private JTextArea jtaDisplay;
+	private JList jlDisplay;
 
 	/**
 	 * This is the constructor of the class
@@ -58,8 +59,8 @@ public class Gui extends JFrame {
 
 		// Declares a custom font & some colors
 		final Font FONT_1 = new Font("Arial", Font.PLAIN, 12);
-		final Color BUTTONS_COLOR = new Color(0, 127, 255);
-		final Color BACKGROUND_COLOR = new Color(142, 35, 35);
+		final Color BUTTONS_COLOR = Color.DARK_GRAY;
+		final Color BACKGROUND_COLOR = Color.LIGHT_GRAY;
 		getContentPane().setBackground(BACKGROUND_COLOR);
 
 		// Sets up a GridBag Layout
@@ -148,41 +149,34 @@ public class Gui extends JFrame {
 																// & constraints
 																// to the frame
 
-		// Sets up the display
-		jtaDisplay = new JTextArea();
-		JScrollPane scrollBar = new JScrollPane(jtaDisplay); // Places the
+		// Sets up the display list
+		jlDisplay = new JList();
+		JScrollPane scrollBar = new JScrollPane(jlDisplay); // Places the
 																// JTextArea
 																// inside a
 																// ScrollPane
 
-		jtaDisplay.setFont(FONT_1);
-		jtaDisplay.setEditable(false);
-		jtaDisplay.setLineWrap(true); // Turns line wrapping on
-		jtaDisplay.setWrapStyleWord(true); // Indicate that the text area should
-											// wrap lines at word boundaries
-
 		// Now we specify constraints for components that are laid out using the
 		// GridBagLayout class
-		GridBagConstraints constraints_jtaDisplay = new GridBagConstraints();
-		constraints_jtaDisplay.gridx = 0; // The starting column of the
+		GridBagConstraints constraints_jlDisplay = new GridBagConstraints();
+		constraints_jlDisplay.gridx = 0; // The starting column of the
 											// component
-		constraints_jtaDisplay.gridy = 2; // The starting row of the component
-		constraints_jtaDisplay.gridwidth = 2; // The number of columns the
+		constraints_jlDisplay.gridy = 2; // The starting row of the component
+		constraints_jlDisplay.gridwidth = 2; // The number of columns the
 												// component use
-		constraints_jtaDisplay.gridheight = 1; // The number of rows the
+		constraints_jlDisplay.gridheight = 1; // The number of rows the
 												// component use
-		constraints_jtaDisplay.weightx = 1.0; // Expands the component column
+		constraints_jlDisplay.weightx = 1.0; // Expands the component column
 												// horizontally
-		constraints_jtaDisplay.weighty = 1.0; // Expands the component row
+		constraints_jlDisplay.weighty = 1.0; // Expands the component row
 												// vertically
-		constraints_jtaDisplay.fill = GridBagConstraints.BOTH; // Fills the
+		constraints_jlDisplay.fill = GridBagConstraints.BOTH; // Fills the
 																// space
 																// horizontally
 																// with the
 																// component
-		getContentPane().add(scrollBar, constraints_jtaDisplay); // Adds the
-																	// text area
-																	// &
+		getContentPane().add(scrollBar, constraints_jlDisplay); // Adds the
+																	// list &
 																	// constraints
 																	// to the
 																	// frame
@@ -191,8 +185,7 @@ public class Gui extends JFrame {
 
 	/**
 	 * This is the button listener class.
-	 * 
-	 * @author tbd
+	 * @author David
 	 * 
 	 */
 	private class GuiListener implements ActionListener {
@@ -215,7 +208,8 @@ public class Gui extends JFrame {
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = fc.getSelectedFile();
 					filePath = file.getAbsolutePath().replace(
-							File.separatorChar, '/');
+							File.separatorChar, '/'); //TODO replace command necessary??
+					
 				}
 
 			}
@@ -223,9 +217,27 @@ public class Gui extends JFrame {
 																// 'Search'
 																// button is
 																// pressed
-				System.out.println("Listener working");
+				searchItem();
 			}
 		} // End of the actionPerformed method
+		
+		/**
+		 * This method is called when 'Search' button is pressed.
+		 */
+		public void searchItem(){
+			String input = "";
+			if(jtfSearch.getText().equals("")){
+				JOptionPane.showMessageDialog(null,"Please, insert "
+						+ "a valid identifier.", "Warning", 
+						JOptionPane.WARNING_MESSAGE);
+			} else {
+				input = jtfSearch.getText();
+				//TODO Invoke here method & display results in jlDisplay
+				// The file path selected by user
+				// may be accessed by this.filepath
+				
+			}
+		} // End of the searchItem method
 
 	} // End of the GuiListener class
 

@@ -20,8 +20,7 @@ public class TestingCli {
 		// TODO Auto-generated method stub
 		// CodeAnalyzer program = new CodeAnalyzer();
 
-		/*
-		 * GUI testing part Gui gui = new Gui(); gui.setVisible(true);
+		//Gui gui = new Gui(); gui.setVisible(true);
 		
 
 		/* TextSplitter Testing Part 
