@@ -3,7 +3,7 @@
  * @author benste
  *
  */
-public class T06aVARS2 {
+public class T06bVARS2 {
 	
 	public String openvar, openvar2;
 	private String closedvar, closevar2;

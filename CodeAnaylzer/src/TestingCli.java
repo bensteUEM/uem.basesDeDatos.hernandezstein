@@ -33,11 +33,11 @@ public class TestingCli {
 		 TextSplitter Testing Part END 
 		 */
 		String path1 = "TestFiles" + File.separator + "T05dMethod.java";
-		String path2 = "TestFiles" + File.separator + "T07bFOR.java";
-		String path3 = "TestFiles" + File.separator + "T07cNested.java";
-		String path4 = "TestFiles" + File.separator + "T07dFOR.java";
+		String path2 = "TestFiles" + File.separator + "T07cNested.java";
+		String path3 = "TestFiles" + File.separator + "T08bpackage.java";
+		String path4 = "TestFiles" + File.separator + "T08aTry.java";
 		ArrayList<String> paths = new ArrayList(0);
-		paths.add(path3);
+		paths.add(path2);
 		
 		// Code Anaylzer Process ...
 		//Get an instance of java compiler
