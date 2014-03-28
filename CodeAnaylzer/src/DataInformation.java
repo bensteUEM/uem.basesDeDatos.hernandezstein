@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 import javax.lang.model.element.Element;
 
 /**
@@ -7,7 +9,7 @@ import javax.lang.model.element.Element;
  * @author benste
  * 
  */
-public class DataInformation {
+public class DataInformation implements Serializable {
 	private String name = "";
 	private String scope = "";
 	private String datatype = "";

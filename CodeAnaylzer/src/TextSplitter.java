@@ -1,8 +1,15 @@
 import java.awt.List;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.EOFException;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.logging.Logger;
@@ -243,12 +250,12 @@ public class TextSplitter {
 				noComments.append(content.charAt(i));
 			}
 
-		}
+		} // End of for loop
 
 		closeFile();
 		return noComments.toString();
 
-	}
+	} // End of delete comments method.
 
 	protected void finalize() throws Throwable {
 		closeFile();
@@ -305,32 +312,111 @@ public class TextSplitter {
 		}
 
 		return null; // TODO DEBUG
-	}
+	} // End of structureCode method
+	
+	 /**
+     * Starts the data storage file.
+     * @param oneInformation A dataInformation object
+     */
+	private static void startFile(DataInformation oneInformation){
+		final String FILE_PATH = "files"+File.separator+"dataInfo.dat"; 
+
+		try{
+			FileOutputStream fos = new FileOutputStream(FILE_PATH);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+
+			oos.writeObject(oneInformation);
+
+			oos.close();
+			fos.close();
+
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+	} // End of start file method
 	
 	/**
 	 * Method to be used from other classes to append one information object to a storage
-	 * @param oneInformation
+	 * @param oneInformation A dataInformation object
 	 * @return success of operation
 	 * @author David
 	 */
 	public static boolean saveToStorage(DataInformation oneInformation){
-		return false;
+		final String FILE_PATH = "files"+File.separator+"dataInfo.dat";
+		File file = new File(FILE_PATH);
 		
-	}
+		try{
+			if(file.length() == 0){
+				startFile(oneInformation);
+				return true;
+			} else {
+				FileOutputStream fos = new FileOutputStream(FILE_PATH, true);
+				CustomOOS coos = new CustomOOS(fos);
+				coos.writeObject(oneInformation);
+				coos.close();
+				fos.close();
+				return true;
+			}
+		}
+		catch (Exception e){
+			e.printStackTrace();
+			return false;
+		}
+	} // End of saveToStorage method
+	
 	/**
 	 * Load all saved objects from the storage for usage as objects
 	 * @return ArrayList with DataInformationObjects
-	 */
-	public ArrayList<DataInformation> loadFromStorage(){
-		return null;
-	}
-	/**
-	 * Clears the storage and leaves it empty for the next append to be the first item
-	 * @param oneInformation
 	 * @author David
 	 */
-	public static void clearStorage(DataInformation oneInformation){
+	public ArrayList<DataInformation> loadFromStorage(){
+		final String FILE_PATH = "files"+File.separator+"dataInfo.dat";
+		ArrayList<DataInformation> list = new ArrayList<DataInformation>(0);
+		try{
+			FileInputStream fis = new FileInputStream(FILE_PATH);
+			ObjectInputStream ois = new ObjectInputStream(fis);
+
+			// Reads rest
+			Object aux = null;
+			while ((aux = ois.readObject()) != null) {
+				if (aux instanceof DataInformation)
+					list.add((DataInformation) aux);
+
+			}
+			ois.close();
+			fis.close();
+			return list;
+		}
+        catch (EOFException e1){
+            // End of file
+            return list;
+        }
+        catch (Exception e2){
+            e2.printStackTrace();
+            return null;
+        }	
 		
-	}
+	} // End of loadFromStorage method
+	
+	/**
+	 * Clears the storage and leaves it empty for the next append to be the first item
+	 * @author David
+	 */
+	public static void clearStorage(){
+		try{
+			final String FILE_PATH = "files/dataInfo.dat";
+			FileWriter fw = new FileWriter(FILE_PATH); // Content will be overwritten
+			BufferedWriter bw = new BufferedWriter(fw); // Writes inside file using a buffer
+
+			bw.write("");
+
+			bw.close();
+			fw.close();
+		}
+		catch (IOException e){
+			e.printStackTrace();
+		}
+	} // End of clearStorage method
 	
 } // End of the TextSplitter class
