@@ -13,12 +13,17 @@ public class T07cNested {
 		public Integer nestedPrivateClassvarPublic = 1;
 	}
 
-	class PublicNestClass {
+	class NoModNestClass {
 		private Integer nestedPublicClassvarPrivate = 1;
 		public Integer nestedPublicClassvarPublic = 1;
 	}
 
 	public void main(String[] args) {
 		openvar = "nestedPublicClassvarPrivate";
+		
+		class FunctionNestClass {
+			private Integer nestedPublicClassvarPrivate = 1;
+			public Integer nestedPublicClassvarPublic = 1;
+		}
 	}
 }
