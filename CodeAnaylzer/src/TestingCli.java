@@ -1,4 +1,6 @@
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -64,6 +66,34 @@ public class TestingCli {
 		
 		// Set the annotation processor to the compiler task
 		task.setProcessors(processors);
+		
+		// CUSTOM CONSOLE OUTPUT STREAM
+		
+		// We first create a stream to hold the output
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		PrintStream ps = new PrintStream(baos);
+		
+		// We save the old System.out
+		PrintStream old = System.out;
+		
+		// We tell system to use our output stream
+		System.setOut(ps);
+		
+		// We then print our contents, which goes to our output stream
+		System.out.println("This text is going to a variable "
+				+ "instead of going to the console :D");
+		System.out.println("This text also!");
+		System.out.println("This is cool");
+		
+		// We record the output in a Sting
+		String output = baos.toString();
+		
+		// We set the output back to console
+		System.out.flush();
+		System.setOut(old);
+		System.out.println("Console output back to normal");
+		
+		// END OF CUSTOM CONSOLE OUTPUT STREAM
 
 		// Perform the compilation task.
 		task.call();
