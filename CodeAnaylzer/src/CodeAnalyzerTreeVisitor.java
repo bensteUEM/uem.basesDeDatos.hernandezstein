@@ -3,6 +3,7 @@
 // javac -cp /usr/lib/jvm/NAME OF YOUR JRE/lib/tools.jar Test.java
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.lang.model.element.Element;
 //http://docs.oracle.com/javase/8/docs/jdk/api/javac/tree/com/sun/source/tree/MethodTree.html
@@ -42,9 +43,12 @@ import com.sun.source.util.Trees;
 public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	TreePath path;
-
+	private final static Logger LOG = Logger.getLogger(CodeAnalyzer.class
+			.getName());
+	
 	@Override
 	public Object visitClass(ClassTree classTree, Trees trees) {
+		LOG.entering("CodeAnalyzerTreeVisitor","visitClass");
 		System.out.println("\n== This is a visited class");
 
 		DataInformation d = new DataInformation();
@@ -70,6 +74,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		d.setScope(generateTextScope(m, d));
 
 		// DEBUG printout of element
+		DataInformationFile.saveToStorage(d);
 		System.out.println(d.toString(""));
 
 		return super.visitClass(classTree, trees);
@@ -77,6 +82,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	@Override
 	public Object visitMethod(MethodTree methodTree, Trees trees) {
+		LOG.entering("CodeAnalyzerTreeVisitor","visitMethod");
 		System.out.println("\n== This is a visited method");
 
 		DataInformation d = new DataInformation();
@@ -117,6 +123,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		}
 
 		// DEBUG printout of element
+		DataInformationFile.saveToStorage(d);
 		System.out.println(d.toString("\t"));
 
 		return super.visitMethod(methodTree, trees);
@@ -124,6 +131,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	@Override
 	public Object visitVariable(VariableTree variableTree, Trees trees) {
+		LOG.entering("CodeAnalyzerTreeVisitor","visitVariable");
 		System.out.println("\n== This is a visited variable");
 
 		DataInformation d = new DataInformation();
@@ -207,7 +215,8 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 		// DEBUG printout of element
 		System.out.println(d.toString("\t"));
-
+		DataInformationFile.saveToStorage(d);
+		
 		return super.visitVariable(variableTree, trees);
 	}
 
@@ -227,6 +236,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		// TODO this is not correct because method parameters seem to have
 		// their class as parent
 		// System.out.println("WARNING - TODO - if Parameter parent might be wrong => scope too wide too");
+		LOG.entering("CodeAnalyzerTreeVisitor","getParentName");
 		
 		if (getParentMethod() != null) {
 			return getParentMethod().getName().toString();

@@ -1,20 +1,19 @@
-import java.awt.List;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.EOFException;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import deprecated.JavaStructure;
+import java.util.logging.SimpleFormatter;
+import javax.annotation.processing.AbstractProcessor;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.StandardJavaFileManager;
+import javax.tools.ToolProvider;
+import javax.tools.JavaCompiler.CompilationTask;
 
 /**
  * This class reads a .JAVA file and splits the source code into different
@@ -26,6 +25,7 @@ import deprecated.JavaStructure;
 public class TextSplitter {
 	private final static Logger LOG = Logger.getLogger(TextSplitter.class
 			.getName());
+	private FileHandler fh;
 	private File file;
 	private FileReader fr;
 	private BufferedReader br;
@@ -36,13 +36,26 @@ public class TextSplitter {
 	 * @param inputfile
 	 * @return ArrayList of Objects (either String or ArrayList<Object> )
 	 */
-	public TextSplitter(String pathToSourceCode) {
-		// this.file = ...fileSourceCode =
-		// TODO
+	public TextSplitter (String pathToSourceCode) {
+		LOG.setLevel(Level.ALL);
+		try {
+			fh = new FileHandler("Logs" + File.separator + "execution.log");
+			LOG.addHandler(fh);
+			SimpleFormatter formatter = new SimpleFormatter();
+			fh.setFormatter(formatter);
+		} catch (SecurityException | IOException e) {
+			e.printStackTrace();
+		}
+		LOG.fine("Text Splitter LOG initialized created");
+		
 		this.file = new File(pathToSourceCode);
 		this.openFile();
-		LOG.fine("Text Splitter created");
 	}
+	
+	/**
+	 * prohibited constructor with too few arguments
+	 */
+	private TextSplitter(){}
 
 	/**
 	 * This method is used to open a .JAVA file.
@@ -263,160 +276,102 @@ public class TextSplitter {
 	} // End of finalize() method
 
 	/**
+	 * Method that actually starts a compilation and analysis the code while
+	 * doing so
+	 * 
+	 * @param paths
+	 */
+	public void compilingProcedure(String path) {
+		LOG.entering("TextSplitter", "compilingProcedure");
+		// Code Anaylzer Process ...
+
+		// Get an instance of java compiler
+		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+		
+		
+		// Get a new instance of the standard file manager implementation
+		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
+				null, null, null);
+		LOG.finest("set up compiler and file Manager");
+
+		// Get the list of java file objects, in this case we have only
+		// one file, TestClass.java
+		ArrayList<String> paths = new ArrayList<String>();
+		paths.add(path);
+		LOG.finest("set up paths");
+		
+		
+		Iterable<? extends JavaFileObject> compilationUnits1 = fileManager
+				.getJavaFileObjectsFromStrings(paths);
+
+		CompilationTask task = compiler.getTask(null, fileManager, null, null,
+				null, compilationUnits1);
+		LOG.finest("set up compilation task");
+
+		// Create a list to hold annotation processors
+		LinkedList<AbstractProcessor> processors = new LinkedList<AbstractProcessor>();
+
+		// Add an annotation processor to the list
+		// processors.add(new CodeAnalyzerProcessorBENSTE());
+		processors.add(new CodeAnalyzerProcessor());
+
+		// Set the annotation processor to the compiler task
+		task.setProcessors(processors);
+		LOG.finest("set up processors");
+
+		DataInformationFile.clearStorage();
+		LOG.finer("reset DataInformation File");
+		
+		// Perform the compilation task.
+		LOG.fine("will start now");
+		task.call();
+		LOG.fine("finished now");
+
+		// TODO check if task is already finished
+		//ArrayList<DataInformation> store = TextSplitter.loadFromStorage();
+	}
+
+	/**
+	 * @return the file name
+	 */
+	public String getFileName() {
+		return file.getPath();
+	}
+
+	/*
+	 * First Version of the Code
+	 */
+	/**
 	 * This method is used to read the file line by line and structure it into
 	 * smaller parts which represent its structure
 	 * 
 	 * @return structured SourceCode
 	 * @author benste
 	 */
-	public ArrayList<JavaStructure> structureCode() {
-		ArrayList<String> line;
-		String textLine;
-		try {
-			while (null != (textLine = br.readLine())) {
-				/*
-				 * This part will read a new Line and convert it to an ArrayList
-				 * split by Spaces
-				 */
-				LOG.finest("started with new line");
-				System.out.println(textLine); // TODO DEBUG line =
-				java.util.List<String> templine = Arrays.asList(textLine
-						.split(" "));
-				line = new ArrayList<String>(templine);
-
-				// This part will search for empty items from the line
-				ArrayList<String> delete = new ArrayList<String>();
-				for (String text : line) {
-					if ((text.equals("")) || (text.equals(" "))
-							|| (text == null)) {
-						System.out.println("items removed from text");
-						delete.add(text);
-					}
-				}
-				// This part removes all empty items from a line 
-				for (String text : delete) {
-					line.remove(text);
-				}
-				delete = null;
-				// End of looking for empty values
-
-				// Skip the line if its empty
-				if (line.isEmpty()) {
-					continue;
-				}
-
-				// TODO continue here with analysis
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return null; // TODO DEBUG
-	} // End of structureCode method
-	
-	 /**
-     * Starts the data storage file.
-     * @param oneInformation A dataInformation object
-     */
-	private static void startFile(DataInformation oneInformation){
-		final String FILE_PATH = "files"+File.separator+"dataInfo.dat"; 
-
-		try{
-			FileOutputStream fos = new FileOutputStream(FILE_PATH);
-			ObjectOutputStream oos = new ObjectOutputStream(fos);
-
-			oos.writeObject(oneInformation);
-
-			oos.close();
-			fos.close();
-
-		}
-		catch (Exception e){
-			e.printStackTrace();
-		}
-	} // End of start file method
-	
-	/**
-	 * Method to be used from other classes to append one information object to a storage
-	 * @param oneInformation A dataInformation object
-	 * @return success of operation
-	 * @author David
+	/* public ArrayList<JavaStructure> structureCode() { ArrayList<String> line;
+	 * String textLine; try { while (null != (textLine = br.readLine())) {
+	 * 
+	 * This part will read a new Line and convert it to an ArrayList split by
+	 * Spaces
+	 * 
+	 * LOG.finest("started with new line"); System.out.println(textLine); //
+	 * TODO DEBUG line = java.util.List<String> templine =
+	 * Arrays.asList(textLine .split(" ")); line = new
+	 * ArrayList<String>(templine);
+	 * 
+	 * // This part will search for empty items from the line ArrayList<String>
+	 * delete = new ArrayList<String>(); for (String text : line) { if
+	 * ((text.equals("")) || (text.equals(" ")) || (text == null)) {
+	 * System.out.println("items removed from text"); delete.add(text); } } //
+	 * This part removes all empty items from a line for (String text : delete)
+	 * { line.remove(text); } delete = null; // End of looking for empty values
+	 * 
+	 * // Skip the line if its empty if (line.isEmpty()) { continue; }
+	 * 
+	 * // TODO continue here with analysis } } catch (IOException e) {
+	 * e.printStackTrace(); }
+	 * 
+	 * return null; // TODO DEBUG } // End of structureCode method
 	 */
-	public static boolean saveToStorage(DataInformation oneInformation){
-		final String FILE_PATH = "files"+File.separator+"dataInfo.dat";
-		File file = new File(FILE_PATH);
-		
-		try{
-			if(file.length() == 0){
-				startFile(oneInformation);
-				return true;
-			} else {
-				FileOutputStream fos = new FileOutputStream(FILE_PATH, true);
-				CustomOOS coos = new CustomOOS(fos);
-				coos.writeObject(oneInformation);
-				coos.close();
-				fos.close();
-				return true;
-			}
-		}
-		catch (Exception e){
-			e.printStackTrace();
-			return false;
-		}
-	} // End of saveToStorage method
-	
-	/**
-	 * Load all saved objects from the storage for usage as objects
-	 * @return ArrayList with DataInformationObjects
-	 * @author David
-	 */
-	public ArrayList<DataInformation> loadFromStorage(){
-		final String FILE_PATH = "files"+File.separator+"dataInfo.dat";
-		ArrayList<DataInformation> list = new ArrayList<DataInformation>(0);
-		try{
-			FileInputStream fis = new FileInputStream(FILE_PATH);
-			ObjectInputStream ois = new ObjectInputStream(fis);
 
-			// Reads rest
-			Object aux = null;
-			while ((aux = ois.readObject()) != null) {
-				if (aux instanceof DataInformation)
-					list.add((DataInformation) aux);
-
-			}
-			ois.close();
-			fis.close();
-			return list;
-		}
-        catch (EOFException e1){
-            // End of file
-            return list;
-        }
-        catch (Exception e2){
-            e2.printStackTrace();
-            return null;
-        }	
-		
-	} // End of loadFromStorage method
-	
-	/**
-	 * Clears the storage and leaves it empty for the next append to be the first item
-	 * @author David
-	 */
-	public static void clearStorage(){
-		try{
-			final String FILE_PATH = "files/dataInfo.dat";
-			FileWriter fw = new FileWriter(FILE_PATH); // Content will be overwritten
-			BufferedWriter bw = new BufferedWriter(fw); // Writes inside file using a buffer
-
-			bw.write("");
-
-			bw.close();
-			fw.close();
-		}
-		catch (IOException e){
-			e.printStackTrace();
-		}
-	} // End of clearStorage method
-	
 } // End of the TextSplitter class

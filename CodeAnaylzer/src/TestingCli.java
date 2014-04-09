@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -20,54 +21,28 @@ public class TestingCli {
 		// TODO Auto-generated method stub
 		// CodeAnalyzer program = new CodeAnalyzer();
 
-		//Gui gui = new Gui(); gui.setVisible(true);
-		
+		// Gui gui = new Gui(); gui.setVisible(true);
 
-		/* TextSplitter Testing Part 
-		
-		String path2 = "TestFiles" + File.separator
-				+ "03d - SmallSampleCOMMENT.java";
-		TextSplitter test = new TextSplitter(path2);
-		// test.structureCode();
-		System.out.println(test.curlyCountLeveled());
-		 TextSplitter Testing Part END 
+		/*
+		 * TextSplitter Testing Part
+		 * 
+		 * String path2 = "TestFiles" + File.separator +
+		 * "03d - SmallSampleCOMMENT.java"; TextSplitter test = new
+		 * TextSplitter(path2); // test.structureCode();
+		 * System.out.println(test.curlyCountLeveled()); TextSplitter Testing
+		 * Part END
 		 */
-		String path1 = "TestFiles" + File.separator + "T05dMethod.java";
-		String path2 = "TestFiles" + File.separator + "T07cNested.java";
-		String path3 = "TestFiles" + File.separator + "T08bpackage.java";
-		String path4 = "TestFiles" + File.separator + "T08aTry.java";
 		ArrayList<String> paths = new ArrayList(0);
+		String path1 = "TestFiles" + File.separator + "T05dMethod.java";
+		paths.add(path1);
+		String path2 = "TestFiles" + File.separator + "T07cNested.java";
 		paths.add(path2);
+		String path3 = "TestFiles" + File.separator + "T08bpackage.java";
+		paths.add(path3);
+		String path4 = "TestFiles" + File.separator + "T08aTry.java";
+		paths.add(path4);
 		
-		// Code Anaylzer Process ...
-		//Get an instance of java compiler
-		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-
-		//Get a new instance of the standard file manager implementation
-		StandardJavaFileManager fileManager = compiler.
-		        getStandardFileManager(null, null, null);
-		        
-		// Get the list of java file objects, in this case we have only 
-		// one file, TestClass.java
-		Iterable<? extends JavaFileObject> compilationUnits1 = 
-		        fileManager.getJavaFileObjectsFromStrings(paths);
-		
-		CompilationTask task = compiler.getTask(null, fileManager, null, null,
-				null, compilationUnits1);
-
-		// Create a list to hold annotation processors
-		LinkedList<AbstractProcessor> processors = new LinkedList<AbstractProcessor>();
-
-		// Add an annotation processor to the list
-		//processors.add(new CodeAnalyzerProcessorBENSTE());
-		processors.add(new CodeAnalyzerProcessor());
-		
-		// Set the annotation processor to the compiler task
-		task.setProcessors(processors);
-
-		// Perform the compilation task.
-		task.call();
-
+		TextSplitter t = new TextSplitter(paths.get(0));
+		t.compilingProcedure(t.getFileName());
 	}
-
 }
