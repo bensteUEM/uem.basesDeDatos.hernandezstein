@@ -39,7 +39,7 @@ public class TextSplitter {
 	public TextSplitter (String pathToSourceCode) {
 		LOG.setLevel(Level.ALL);
 		try {
-			fh = new FileHandler("Logs" + File.separator + "execution.log");
+			fh = new FileHandler("Logs" + File.separator + "TextSplitter.log");
 			LOG.addHandler(fh);
 			SimpleFormatter formatter = new SimpleFormatter();
 			fh.setFormatter(formatter);
@@ -326,9 +326,6 @@ public class TextSplitter {
 		LOG.fine("will start now");
 		task.call();
 		LOG.fine("finished now");
-
-		// TODO check if task is already finished
-		//ArrayList<DataInformation> store = TextSplitter.loadFromStorage();
 	}
 
 	/**

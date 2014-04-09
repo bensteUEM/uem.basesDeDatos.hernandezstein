@@ -1,9 +1,15 @@
-// original code from https://today.java.net/pub/a/today/2008/04/10/source-code-analysis-using-java-6-compiler-apis.html#accessing-the-abstract-syntax-tree-the-compiler-tree-api
+// inspiration of code from https://today.java.net/pub/a/today/2008/04/10/source-code-analysis-using-java-6-compiler-apis.html#accessing-the-abstract-syntax-tree-the-compiler-tree-api
 // requires JRE JAR file on compile
 // javac -cp /usr/lib/jvm/NAME OF YOUR JRE/lib/tools.jar Test.java
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import javax.lang.model.element.Element;
 //http://docs.oracle.com/javase/8/docs/jdk/api/javac/tree/com/sun/source/tree/MethodTree.html
@@ -16,6 +22,8 @@ import com.sun.source.tree.VariableTree;
 import com.sun.source.util.TreePath;
 import com.sun.source.util.TreePathScanner;
 import com.sun.source.util.Trees;
+import com.sun.tools.javac.tree.JCTree.JCClassDecl;
+import com.sun.tools.javac.tree.JCTree.JCCompilationUnit;
 
 /**
  * Methods inherited from class com.sun.source.util.TreeScanner
@@ -42,13 +50,28 @@ import com.sun.source.util.Trees;
  */
 public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
+	public CodeAnalyzerTreeVisitor() {
+		super();
+		LOG.setLevel(Level.ALL);
+		try {
+			FileHandler fh = new FileHandler("Logs" + File.separator
+					+ "CodeAnalyzerTreeVisitor.log");
+			LOG.addHandler(fh);
+			SimpleFormatter formatter = new SimpleFormatter();
+			fh.setFormatter(formatter);
+		} catch (SecurityException | IOException e) {
+			e.printStackTrace();
+		}
+		LOG.fine("Text Splitter LOG initialized created");
+	}
+
 	TreePath path;
-	private final static Logger LOG = Logger.getLogger(CodeAnalyzer.class
-			.getName());
-	
+	private final static Logger LOG = Logger
+			.getLogger(CodeAnalyzerTreeVisitor.class.getName());
+
 	@Override
 	public Object visitClass(ClassTree classTree, Trees trees) {
-		LOG.entering("CodeAnalyzerTreeVisitor","visitClass");
+		LOG.entering("CodeAnalyzerTreeVisitor", "visitClass");
 		System.out.println("\n== This is a visited class");
 
 		DataInformation d = new DataInformation();
@@ -59,15 +82,15 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		d.setDatatype(classTree.getKind().toString());
 		ModifiersTree m = classTree.getModifiers();
 
-		// Special Methods called Class Methods
-		if (classTree.toString().contains("final")) {
-			// TODO not included in this version
-		}
+		// Specials
+		/*
+		 * if (classTree.toString().contains("final")) { }
+		 */
 		d.setName(classTree.getSimpleName().toString());
 		d.setModifiers(classTree.getModifiers().toString());
 		d.setReturnType("n/a");
 		d.setParameters("n/a");
-		
+
 		/*
 		 * SCOPE ...
 		 */
@@ -82,7 +105,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	@Override
 	public Object visitMethod(MethodTree methodTree, Trees trees) {
-		LOG.entering("CodeAnalyzerTreeVisitor","visitMethod");
+		LOG.entering("CodeAnalyzerTreeVisitor", "visitMethod");
 		System.out.println("\n== This is a visited method");
 
 		DataInformation d = new DataInformation();
@@ -96,10 +119,11 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		if (m.toString().contains("static")) {
 			d.setDatatype("CLASS " + d.getDatatype() + " (Static Method)");
 		}
-		// Special Methods having final can not be overwritten
-		else if (methodTree.toString().contains("final")) {
-			// TODO not included in this version
-		}
+		// Specials
+		/*
+		 * else if (methodTree.toString().contains("final")) {
+		 * }
+		 */
 
 		/*
 		 * SCOPE ...
@@ -131,7 +155,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	@Override
 	public Object visitVariable(VariableTree variableTree, Trees trees) {
-		LOG.entering("CodeAnalyzerTreeVisitor","visitVariable");
+		LOG.entering("CodeAnalyzerTreeVisitor", "visitVariable");
 		System.out.println("\n== This is a visited variable");
 
 		DataInformation d = new DataInformation();
@@ -202,9 +226,9 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		/*
 		 * SCOPE ...
 		 */
-		
+
 		d.setScope(generateTextScope(m, d));
-		
+
 		/*
 		 * Other Fields
 		 */
@@ -216,7 +240,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		// DEBUG printout of element
 		System.out.println(d.toString("\t"));
 		DataInformationFile.saveToStorage(d);
-		
+
 		return super.visitVariable(variableTree, trees);
 	}
 
@@ -236,13 +260,18 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		// TODO this is not correct because method parameters seem to have
 		// their class as parent
 		// System.out.println("WARNING - TODO - if Parameter parent might be wrong => scope too wide too");
-		LOG.entering("CodeAnalyzerTreeVisitor","getParentName");
-		
-		if (getParentMethod() != null) {
+		LOG.entering("CodeAnalyzerTreeVisitor", "getParentName");
+		String parentKind = getParentTree().getKind().toString();
+		LOG.finest("Parent Type is: " + parentKind);
+		if (parentKind.equals("METHOD")) {
 			return getParentMethod().getName().toString();
-		} else if (getParentClass() != null) {
+		} else if (parentKind.equals("CLASS")) {
 			return getParentClass().getSimpleName().toString();
+		} else if (parentKind.equals("COMPILATION_UNIT")) {
+			return "";
 		} else {
+			LOG.warning("Parent Element Type is not Implemented: "
+					+ parentKind.toString());
 			return "";
 		}
 	}
@@ -254,22 +283,31 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 * @author benste
 	 */
 	public MethodTree getMethod(Tree anyTree) {
-		// System.out.println("EXPERIMENTAL getParentMETHOD");
-		try {
-			MethodTree test = (MethodTree) anyTree;
-			return test;
-		} catch (java.lang.ClassCastException e1) {
-			/*
-			 * System.out .println("Class Cast Exception (not MethodTree) " +
-			 * e1);
-			 */
-		} catch (Exception e1) {
-			/*
-			 * System.out.println("Other issue when trying to cast to Method " +
-			 * e1);
-			 */
+		if (anyTree.getKind().toString().equals("METHOD")) {
+			LOG.finest("getMethod - Success");
+			return (MethodTree) anyTree;
+		} else {
+			LOG.info("Parent is not a Method but: " + anyTree.getKind());
+			return null;
 		}
-		return null;
+	}
+
+	/**
+	 * This method is a quick access to the current items parent
+	 * 
+	 * @return parent as Tree
+	 * 
+	 *         Elements can be JCCompilationUnit, JCClassDecl , ClassTree,
+	 *         MethodTree,
+	 */
+	public Tree getParentTree() {
+		LOG.entering("CodeAnalyzerTreeVisitor", "getParentTree");
+		Iterator<Tree> it = getCurrentPath().iterator();
+		it.next(); // current element in tree
+		Tree t = it.next(); // parent element in tree
+		// LOG.info(t.getKind().toString()); //TODO DEBUG output
+		LOG.fine("ParentTree is type:<" + t.getKind() + ">");
+		return t;
 	}
 
 	/**
@@ -281,8 +319,16 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 * @author benste
 	 */
 	public MethodTree getParentMethod() {
-		return getMethod(getCurrentPath().getParentPath().getParentPath()
-				.getLeaf());
+		LOG.entering("CodeAnalyzerTreeVisitor", "getParentMethod");
+		try {
+			MethodTree m = getMethod(getParentTree());
+			LOG.finest("Current Element has following parent M.: "
+					+ m.getName());
+			return m;
+		} catch (Exception e) {
+			LOG.finest("Current Element has no Parent Method");
+			return null;
+		}
 	}
 
 	/**
@@ -293,24 +339,19 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 * @author benste
 	 */
 	public ClassTree getParentClass() {
-		// System.out.println("EXPERIMENTAL getParentClass");
-		try {
-			ClassTree test = (ClassTree) getCurrentPath().getParentPath()
-					.getParentPath().getLeaf();
-			return test;
-		} catch (java.lang.ClassCastException e1) {
-			/*
-			 * System.out .println("Class Cast Exception (not ClassTree)\n " +
-			 * e1);
-			 * System.out.println(getCurrentPath().getParentPath().getParentPath
-			 * () .getLeaf().getClass());
-			 */
-		} catch (Exception e1) {
-			/*
-			 * System.out.println("Other issue when trying to cast to Method " +
-			 * e1);
-			 */
+		LOG.entering("CodeAnalyzerTreeVisitor", "getParentClass");
+		// TODO here is a problem that a parent of the parent path of which i
+		// use the leaf does not exist
+
+		Tree tree = getParentTree();
+
+		if (tree.getKind().toString().equals("CLASS")) {
+			ClassTree c = (ClassTree) tree;
+			LOG.finest("Current Element has following parent C.: "
+					+ c.getSimpleName());
+			return c;
 		}
+		LOG.warning("Current Elements Parent is not a CLASS");
 		return null;
 	}
 
@@ -325,24 +366,39 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 * @author benste
 	 */
 	public String generateTextScope(ModifiersTree m, DataInformation d) {
-		/*
-		 * SCOPE ...
-		 */
-		String parentScope = "?PARENT?"; // TODO
-		String localScope = "?LOCAL?"; // TODO
+		LOG.entering("CodeAnalyzerTreeVisitor", "generateTextScope");
+		String parentScope = "";
+		String localScope = "";
+		if (getParentName().equals("")) {
+			LOG.info("No Parent of - " + d.getName() + " - assuming TopLevel");
+			parentScope = "*";
+			localScope = "*";
+		} else {
+			DataInformation parentobj = DataInformationFile
+					.getParentElement(getParentName());
+			LOG.fine("Parent object Found and relative scope text defined");
+			parentScope = parentobj.getScope() + "." + parentobj.getName();
+			localScope = parentobj.getName();
+		}
+		LOG.fine("Relative Scopes defined");
+
+		// init value of result
 		String result = "UNKNOWN SCOPE CASE";
 
 		// PUBLIC => use parent scope
 		if (m.toString().contains("public")) {
 			result = parentScope;
+			LOG.finest("PUBLIC - Parent Scope applied");
 		}
 		// PRIVATE => use local scope (method or class)
 		else if (m.toString().contains("private")) {
 			result = localScope;
+			LOG.finest("PRIVATE - Local Scope applied");
 		}
 		// PROTECTED => use local scope + package
 		else if (m.toString().contains("protected")) {
 			result = localScope + " + Package";
+			LOG.finest("PROTECTED - Mixed Scope applied");
 		}
 		// if not any of those three modifier and neither a Parameter or Local
 		// Variable
@@ -350,6 +406,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		else if (!(d.getDatatype().startsWith("PARAMETER"))
 				&& !(d.getDatatype().startsWith("LOCAL"))) {
 			result = localScope + " + Package + SubClass";
+			LOG.finest("NONE - Mixed Scope applied");
 		}
 		// Variables which have no modifiers - Local = have their parent method
 		// / class as scope
@@ -365,13 +422,14 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		else if (d.getDatatype().startsWith("PARAMETER")) {
 			if (!(getParentName().equals(""))) {
 				result = getParentName();
-				System.out.println("PARAMETER + Parent in Scope helper method is: <"
-						+ getParentName() + ">");
+				System.out
+						.println("PARAMETER + Parent in Scope helper method is: <"
+								+ getParentName() + ">");
 			} else {
 				System.out.println("PARAMETER var without ParentName");
 			}
 		}
-
+		LOG.finest("Following Scope has been determined: " + result);
 		return result;
 	}
 }

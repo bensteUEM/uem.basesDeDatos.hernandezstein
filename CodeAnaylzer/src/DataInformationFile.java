@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.logging.Logger;
 
 public class DataInformationFile {
@@ -80,7 +81,7 @@ public class DataInformationFile {
 			oos.close();
 			fos.close();
 			
-			LOG.info("Filled new ResultFile with 1st object");
+			LOG.finest("Filled new ResultFile with 1st object");
 
 		} catch (Exception e) {
 			LOG.severe(e.getMessage());
@@ -93,7 +94,7 @@ public class DataInformationFile {
 	 * @return ArrayList with DataInformationObjects
 	 * @author David
 	 */
-	public static ArrayList<DataInformation> loadFromStorage() {
+	public static ArrayList<DataInformation> loadAllFromStorage() {
 		ArrayList<DataInformation> list = new ArrayList<DataInformation>(0);
 		try {
 			FileInputStream fis = new FileInputStream(FILE_PATH);
@@ -122,6 +123,35 @@ public class DataInformationFile {
 
 	} // End of loadFromStorage method
 
+	/**
+	 * This function will return the DataInformation Object stored for the Parent
+	 * 
+	 * @return String defining the Scope
+	 * @author benste
+	 */
+	public static DataInformation getParentElement(String nameOfParent) {
+		LOG.entering("DataInformationFile","loadParamParentMethod");
+		ArrayList<DataInformation> data = loadAllFromStorage();
+		
+		// Generate an iterator. Start just after the last element.
+		ListIterator<DataInformation> list = data.listIterator(data.size());
+
+		// Iterate in reverse.
+		while(list.hasPrevious()) {
+			DataInformation obj =  list.previous();
+			if (obj.getName().equals(nameOfParent)){
+				LOG.finer("Found object which is parent: "+nameOfParent);
+				return obj;
+			} //end if
+		} //end while
+
+		LOG.info("No parent found with name: "+nameOfParent+" - assuming Top Level");
+		return null;
+
+	} // End of loadFromStorage method
+	
+	
+	
 	/**
 	 * Clears the storage and leaves it empty for the next append to be the
 	 * first item
