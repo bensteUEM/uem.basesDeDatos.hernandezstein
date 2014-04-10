@@ -93,8 +93,17 @@ public class DataInformation implements Serializable {
 		text += ("\n" + tabs + "Modifiers are: \t\t" + this.getModifiers());
 		text += ("\n" + tabs + "Return Value is: \t" + this.getReturnType());
 		text += ("\n" + tabs + "Parameters are: \t" + this.getParameters());
-
 		return text;
+	}
+
+	/**
+	 * Default toString method compying with Project Specification § category of
+	 * programming element, data type, scope, return value if applicable
+	 * 
+	 * @author bensteUEM
+	 */
+	public String toString(){
+		return (this.getName() + "\t\t"+this.getDatatype()+ "\t\t"+this.getScope()+ "\t\t"+this.getReturnType()+ "\t\t"+this.getParameters());
 	}
 
 	/**

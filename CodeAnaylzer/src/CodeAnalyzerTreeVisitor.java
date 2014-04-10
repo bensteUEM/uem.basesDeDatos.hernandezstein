@@ -205,6 +205,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		} // end class static
 
 		// Parameter = parent Method contains this items name as parameter
+		
 		if (getParentClass() != null) { // check safe to have a parent class
 										// available
 			for (Tree leaf : getParentClass().getMembers()) { // get all members

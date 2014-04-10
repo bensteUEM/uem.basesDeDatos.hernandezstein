@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -8,12 +9,15 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -31,112 +35,96 @@ public class Gui extends JFrame {
 	private JTextField jtfSearch;
 	private JButton jbSearch;
 	private JList<String> jlDisplay;
+	private JScrollPane scrollBar;
+
+	// Calculates the dimension of the computer screen
+	// Sets the window size & location from the screen width and height data
+	Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
+	final int FRAME_WIDTH = d.width / 2;
+	final int FRAME_HEIGHT = d.height / 2;
+	private ActionListener guiLi;
+	private DefaultListModel<String> symbols;
+	private TextSplitter tool;
 
 	/**
 	 * This is the constructor of the class
 	 */
 	public Gui() {
 
-		// Calculates the dimension of the computer screen
-		Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-
-		// Sets the window size & location from the screen width and height data
-		final int FRAME_WIDTH = d.width / 2;
-		final int FRAME_HEIGHT = d.height / 2;
-		setSize(FRAME_WIDTH, FRAME_HEIGHT);
-		setLocation(d.width / 2 - FRAME_WIDTH / 2, d.height / 2 - FRAME_HEIGHT
-				/ 2);
-		setTitle("Main Window"); // Sets up the window title
-		setResizable(true); // Resizable window
-		Image icon1 = Toolkit.getDefaultToolkit().getImage("img/uem_icon.gif"); // Gets
-																				// an
-																				// image
-																				// from
-																				// a
-																				// file
-		setIconImage(icon1); // Sets an image as the icon of the window
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Disposes window on
-															// close
-
-		// Declares a custom font & some colors
-		final Font FONT_1 = new Font("Arial", Font.PLAIN, 12);
-		final Color BUTTONS_COLOR = Color.DARK_GRAY;
-		final Color BACKGROUND_COLOR = Color.LIGHT_GRAY;
-		getContentPane().setBackground(BACKGROUND_COLOR);
-
 		// Sets up a GridBag Layout
 		GridBagLayout gridBagLayout = new GridBagLayout();
 		getContentPane().setLayout(gridBagLayout);
 
-		// Sets up the button listening
-		GuiListener guiLi = new GuiListener();
+		createElements();
+		configureElements();
+		linkOperations();
+		layoutElements();
 
+	} // End of the constructor of the class
+
+	private void createElements() {
 		// Sets up the 'Browse File...' button
 		jbBrowse = new JButton("Browse File...");
+		// Sets up the display list
+		symbols = new DefaultListModel<String>();
+		jlDisplay = new JList<String>(symbols);
+		// Places the JTextArea inside a ScrollPane
+		scrollBar = new JScrollPane(jlDisplay);
 
+		// Sets up the search text field
+		jtfSearch = new JTextField();
+		// Sets up the 'Search' button
+		jbSearch = new JButton("Search");
+
+		// Sets up the button listening
+		guiLi = new GuiListener();
+
+		// Create the real Tool
+		this.tool = null;
+	}
+
+	private void configureElements() {
+		setSize(FRAME_WIDTH, FRAME_HEIGHT);
+		setLocation(d.width / 2 - FRAME_WIDTH / 2, d.height / 2 - FRAME_HEIGHT
+				/ 2);
+
+		setTitle("Main Window"); // Sets up the window title
+		setResizable(true); // Resizable window
+		Image icon1 = Toolkit.getDefaultToolkit().getImage("img/uem_icon.gif");
+		// Gets an image from a file
+		setIconImage(icon1); // Sets an image as the icon of the window
+
+		// Declares a custom font & some colors
+		final Font FONT_1 = new Font("Helvetica", Font.PLAIN, 12);
+		final Color BUTTONS_COLOR = Color.DARK_GRAY;
+		final Color BACKGROUND_COLOR = Color.LIGHT_GRAY;
+		getContentPane().setBackground(BACKGROUND_COLOR);
+
+		// apply to elements
 		jbBrowse.setFont(FONT_1);
 		jbBrowse.setBackground(BUTTONS_COLOR);
 		jbBrowse.setForeground(Color.WHITE);
 		jbBrowse.setActionCommand("pressBrowse");
-		jbBrowse.addActionListener(guiLi); // Registers the object as a listener
-											// of the component
-
-		// Now we specify constraints for components that are laid out using the
-		// GridBagLayout class
-		GridBagConstraints constraints_jbBrowse = new GridBagConstraints();
-		constraints_jbBrowse.gridx = 0; // The starting column of the component
-		constraints_jbBrowse.gridy = 0; // The starting row of the component
-		constraints_jbBrowse.gridwidth = 2; // The number of columns the
-											// component use
-		constraints_jbBrowse.gridheight = 1; // The number of rows the component
-												// use
-		constraints_jbBrowse.fill = GridBagConstraints.HORIZONTAL; // Fills the
-																	// space
-																	// horizontally
-																	// with the
-																	// component
-		getContentPane().add(jbBrowse, constraints_jbBrowse); // Adds the button
-																// & constraints
-																// to the frame
-
-		// Sets up the search text field
-		jtfSearch = new JTextField();
 
 		jtfSearch.setFont(FONT_1);
-
-		// Now we specify constraints for components that are laid out using the
-		// GridBagLayout class
-		GridBagConstraints constraints_jtfSearch = new GridBagConstraints();
-		constraints_jtfSearch.gridx = 0; // The starting column of the component
-		constraints_jtfSearch.gridy = 1; // The starting row of the component
-		constraints_jtfSearch.gridwidth = 1; // The number of columns the
-												// component use
-		constraints_jtfSearch.gridheight = 1; // The number of rows the
-												// component use
-		constraints_jtfSearch.weightx = 1.0; // Expands the component column
-												// horizontally
-		constraints_jtfSearch.fill = GridBagConstraints.HORIZONTAL; // Fills the
-																	// space
-																	// horizontally
-																	// with the
-																	// component
-		getContentPane().add(jtfSearch, constraints_jtfSearch); // Adds the
-																// button &
-																// constraints
-																// to the frame
-
-		// Sets up the 'Search' button
-		jbSearch = new JButton("Search");
-
 		jbSearch.setFont(FONT_1);
 		jbSearch.setBackground(BUTTONS_COLOR);
 		jbSearch.setForeground(Color.WHITE);
 		jbSearch.setActionCommand("pressSearch");
-		jbSearch.addActionListener(guiLi); // Registers the object as a listener
-											// of the component
+	}
 
-		// Now we specify constraints for components that are laid out using the
-		// GridBagLayout class
+	private void linkOperations() {
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Disposes window on
+		// close
+		jbBrowse.addActionListener(guiLi); // Registers the object as a listener
+		// of the component
+		jbSearch.addActionListener(guiLi); // Registers the object as a listener
+		// of the component
+	}
+
+	private void layoutElements() {
+
+		// Create the Gridbag Layout
 		GridBagConstraints constraints_jbSearch = new GridBagConstraints();
 		constraints_jbSearch.gridx = 1; // The starting column of the component
 		constraints_jbSearch.gridy = 1; // The starting row of the component
@@ -144,48 +132,45 @@ public class Gui extends JFrame {
 											// component use
 		constraints_jbSearch.gridheight = 1; // The number of rows the component
 												// use
-		// constraints_jbSearch.fill = GridBagConstraints.HORIZONTAL; // Fills
-		// the space horizontally with the component
-		getContentPane().add(jbSearch, constraints_jbSearch); // Adds the button
-																// & constraints
-																// to the frame
 
-		// Sets up the display list
-		jlDisplay = new JList<String>();
-		JScrollPane scrollBar = new JScrollPane(jlDisplay); // Places the
-																// JTextArea
-																// inside a
-																// ScrollPane
+		// Adds the button & constraints to the frame
+		getContentPane().add(jbSearch, constraints_jbSearch);
 
-		// Now we specify constraints for components that are laid out using the
-		// GridBagLayout class
+		// Create the Gridbag Layout
+		GridBagConstraints constraints_jbBrowse = new GridBagConstraints();
+		constraints_jbBrowse.gridx = 0;
+		constraints_jbBrowse.gridy = 0;
+		constraints_jbBrowse.gridwidth = 2;
+		constraints_jbBrowse.gridheight = 1;
+		constraints_jbBrowse.fill = GridBagConstraints.HORIZONTAL;
+		getContentPane().add(jbBrowse, constraints_jbBrowse);
+
+		// Create the Gridbag Layout
+		GridBagConstraints constraints_jtfSearch = new GridBagConstraints();
+		constraints_jtfSearch.gridx = 0;
+		constraints_jtfSearch.gridy = 1;
+		constraints_jtfSearch.gridwidth = 1;
+		constraints_jtfSearch.gridheight = 1;
+		constraints_jtfSearch.weightx = 1.0;
+		constraints_jtfSearch.fill = GridBagConstraints.HORIZONTAL;
+		getContentPane().add(jtfSearch, constraints_jtfSearch);
+
+		// Create the Gridbag Layout
 		GridBagConstraints constraints_jlDisplay = new GridBagConstraints();
-		constraints_jlDisplay.gridx = 0; // The starting column of the
-											// component
-		constraints_jlDisplay.gridy = 2; // The starting row of the component
-		constraints_jlDisplay.gridwidth = 2; // The number of columns the
-												// component use
-		constraints_jlDisplay.gridheight = 1; // The number of rows the
-												// component use
-		constraints_jlDisplay.weightx = 1.0; // Expands the component column
-												// horizontally
-		constraints_jlDisplay.weighty = 1.0; // Expands the component row
-												// vertically
-		constraints_jlDisplay.fill = GridBagConstraints.BOTH; // Fills the
-																// space
-																// horizontally
-																// with the
-																// component
-		getContentPane().add(scrollBar, constraints_jlDisplay); // Adds the
-																	// list &
-																	// constraints
-																	// to the
-																	// frame
-
-	} // End of the constructor of the class
+		constraints_jlDisplay.gridx = 0;
+		constraints_jlDisplay.gridy = 2;
+		constraints_jlDisplay.gridwidth = 2;
+		constraints_jlDisplay.gridheight = 1;
+		constraints_jlDisplay.weightx = 1.0;
+		constraints_jlDisplay.weighty = 1.0;
+		constraints_jlDisplay.fill = GridBagConstraints.BOTH;
+		// Add scrollbar Element to ContentPane with defined Gridbag layout
+		getContentPane().add(scrollBar, constraints_jlDisplay);
+	}
 
 	/**
 	 * This is the button listener class.
+	 * 
 	 * @author David
 	 * 
 	 */
@@ -204,14 +189,7 @@ public class Gui extends JFrame {
 																// 'Browse'
 																// button is
 																// pressed
-
-				int returnVal = fc.showOpenDialog(this.fc);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					File file = fc.getSelectedFile();
-					filePath = file.getAbsolutePath().replace(
-							File.separatorChar, '/'); //TODO replace command necessary??
-					
-				}
+				onPressBrowse();
 
 			}
 			if (e.getActionCommand().equals("pressSearch")) { // Is invoked when
@@ -221,24 +199,71 @@ public class Gui extends JFrame {
 				searchItem();
 			}
 		} // End of the actionPerformed method
-		
+
+		/**
+		 * Method which is excecuted once a file is selected
+		 */
+		public void onPressBrowse() {
+			int returnVal = fc.showOpenDialog(this.fc);
+			// TODO limit visible FileTypes to .JAVA
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = fc.getSelectedFile();
+				setFilePath(file.getAbsolutePath());
+
+				if (getFilePath().endsWith(".java")) {
+					tool.compilingProcedure(getFilePath());
+				} else {
+					JOptionPane.showMessageDialog(getContentPane(),
+							"This tool will only analyse ONE .java File");
+
+				}
+			} else {
+				JOptionPane
+						.showMessageDialog(getContentPane(),
+								"Something went wrong opening the File, please try again");
+			}
+		}
+
 		/**
 		 * This method is called when 'Search' button is pressed.
 		 */
-		public void searchItem(){
+		public void searchItem() {
 			String input = "";
-			if(jtfSearch.getText().equals("")){
-				JOptionPane.showMessageDialog(null,"Please, insert "
-						+ "a valid identifier.", "Warning", 
-						JOptionPane.WARNING_MESSAGE);
-			} else {
-				input = jtfSearch.getText();
-				//TODO Invoke here method & display results in jlDisplay
-				// The file path selected by user
-				// may be accessed by this.filepath
-				
+			symbols.clear();
+			String searchKey = jtfSearch.getText();
+
+			ArrayList<DataInformation> data = DataInformationFile
+					.loadAllFromStorage();
+
+			for (DataInformation item : data) {
+				if (searchKey.equals("") || item.getName().contains(searchKey)) {
+					// Adding all elements if no search param,
+					// otherwise those which contain parts of the search in
+					// their name
+					symbols.addElement(item.toString());
+				}
 			}
+			// TODO Invoke here method & display results in jlDisplay
+			// The file path selected by user
+			// may be accessed by this.filepath
+
 		} // End of the searchItem method
+
+		/**
+		 * @return the filePath
+		 */
+		public String getFilePath() {
+			return filePath;
+		}
+
+		/**
+		 * @param filePath
+		 *            the filePath to set
+		 */
+		public void setFilePath(String filePath) {
+			this.filePath = filePath;
+			tool = new TextSplitter(filePath);
+		}
 
 	} // End of the GuiListener class
 
