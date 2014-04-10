@@ -12,6 +12,8 @@ import javax.lang.model.element.Element;
  */
 public class DataInformation implements Serializable {
 
+	private static final long serialVersionUID = 6860038564004371640L;
+
 	private final static Logger LOG = Logger.getLogger(DataInformation.class
 			.getName());
 

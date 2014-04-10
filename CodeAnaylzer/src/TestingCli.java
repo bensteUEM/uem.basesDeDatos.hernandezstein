@@ -1,14 +1,5 @@
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
-import java.util.LinkedList;
-
-import javax.annotation.processing.AbstractProcessor;
-import javax.tools.JavaCompiler;
-import javax.tools.JavaCompiler.CompilationTask;
-import javax.tools.JavaFileObject;
-import javax.tools.StandardJavaFileManager;
-import javax.tools.ToolProvider;
 
 public class TestingCli {
 
@@ -18,7 +9,6 @@ public class TestingCli {
 	 * @author tbd
 	 */
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
 		// CodeAnalyzer program = new CodeAnalyzer();
 
 		// Gui gui = new Gui(); gui.setVisible(true);
@@ -32,7 +22,7 @@ public class TestingCli {
 		 * System.out.println(test.curlyCountLeveled()); TextSplitter Testing
 		 * Part END
 		 */
-		ArrayList<String> paths = new ArrayList(0);
+		ArrayList<String> paths = new ArrayList<String>(0);
 		String path1 = "TestFiles" + File.separator + "T05dMethod.java";
 		paths.add(path1);
 		String path2 = "TestFiles" + File.separator + "T02bSmallSampleVAR.java";

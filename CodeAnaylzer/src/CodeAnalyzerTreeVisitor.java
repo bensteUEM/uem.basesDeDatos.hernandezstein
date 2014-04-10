@@ -76,9 +76,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		System.out.println("\n== This is a visited class");
 
 		DataInformation d = new DataInformation();
-		TreePath path = getCurrentPath();
-		Scope scope = trees.getScope(path);
-		System.out.println("SCOPE: " + scope.toString());// TODO DEBUG
 
 		// preset for Datatype
 		d.setDatatype(classTree.getKind().toString());
@@ -113,12 +110,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		DataInformation d = new DataInformation();
 		TreePath path = getCurrentPath();
 		Scope scope = trees.getScope(path);
-		Scope parentscope = scope.getEnclosingScope(); // TODO DEBUG
-		for (Element item : parentscope.getLocalElements()) {
-			System.out.println(item);
-		}
-		System.out.println("SCOPE: "
-				+ parentscope.getLocalElements().toString());// TODO DEBUG
 
 		// preset for Datatype
 		d.setDatatype(methodTree.getKind().toString());
@@ -166,8 +157,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	private boolean isConstructor(MethodTree methodTree) {
 		return methodTree.getName().toString().equals("<init>");
-		// make sure own constructors with same name as class get excluded as
-		// well
 		// TODO #26 in Github
 	}
 
@@ -179,8 +168,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		DataInformation d = new DataInformation();
 		TreePath path = getCurrentPath();
 		Scope scope = trees.getScope(path);
-		// scope = scope.getEnclosingScope();
-		System.out.println("SCOPE: " + scope.toString());// TODO DEBUG
 		ModifiersTree m = variableTree.getModifiers();
 
 		/*
@@ -324,14 +311,12 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 *         MethodTree,
 	 */
 	public Tree getParentTree(TreePath currentPath) {
-		// TODO this is not correct because method parameters seem to have
-		// their class as parent - CHECK
+		//TODO #17 @Github (special case Parent of a Parameter of a Method)
 
 		LOG.entering("CodeAnalyzerTreeVisitor", "getParentTree");
 		Iterator<Tree> it = currentPath.iterator();
 		it.next(); // current element in tree
 		Tree t = it.next(); // parent element in tree
-		// LOG.info(t.getKind().toString()); //TODO DEBUG output
 		LOG.fine("ParentTree is type:<" + t.getKind() + ">");
 		return t;
 	}
@@ -366,8 +351,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 */
 	public ClassTree getParentClass() {
 		LOG.entering("CodeAnalyzerTreeVisitor", "getParentClass");
-		// TODO here is a problem that a parent of the parent path of which i
-		// use the leaf does not exist
 
 		Tree tree = getParentTree(getCurrentPath());
 
@@ -408,7 +391,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 				inConstructor = isConstructor((MethodTree) parent);
 				LOG.finer("current variable is part of a constructor? : "
 						+ inConstructor);
-				LOG.warning("could be both as parent, mathod, or class / constru"); // TODO
 			}
 			DataInformation parentobj = DataInformationFile.getParentElement(parentName,
 					inConstructor);
@@ -428,8 +410,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 		// PUBLIC => use parent scope
 		if (m.toString().contains("public")) {
-			LOG.info("TEST - public var, set parent scope which is: "
-					+ parentScope); // TODO DEBUG
 			result = parentScope;
 			LOG.finest("PUBLIC - Parent Scope applied");
 		}

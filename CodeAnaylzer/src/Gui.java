@@ -26,10 +26,11 @@ import javax.swing.JTextField;
  */
 public class Gui extends JFrame {
 
+	private static final long serialVersionUID = 4384002466857611830L;
 	private JButton jbBrowse;
 	private JTextField jtfSearch;
 	private JButton jbSearch;
-	private JList jlDisplay;
+	private JList<String> jlDisplay;
 
 	/**
 	 * This is the constructor of the class
@@ -150,7 +151,7 @@ public class Gui extends JFrame {
 																// to the frame
 
 		// Sets up the display list
-		jlDisplay = new JList();
+		jlDisplay = new JList<String>();
 		JScrollPane scrollBar = new JScrollPane(jlDisplay); // Places the
 																// JTextArea
 																// inside a
