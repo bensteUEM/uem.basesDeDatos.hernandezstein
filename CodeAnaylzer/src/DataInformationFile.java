@@ -17,9 +17,9 @@ public class DataInformationFile {
 			.getName());
 	final static String FILE_PATH = "results" + File.separator + "dataInfo.dat";
 
-	static{
+	static {
 		File theFile = new File(FILE_PATH);
-		File theDir =  new File(theFile.getParent());
+		File theDir = new File(theFile.getParent());
 
 		// if the directory does not exist, create it
 		if (!theDir.exists()) {
@@ -27,7 +27,7 @@ public class DataInformationFile {
 			theDir.mkdir();
 		}
 	}
-	
+
 	/**
 	 * Method to be used from other classes to append one information object to
 	 * a storage
@@ -38,7 +38,7 @@ public class DataInformationFile {
 	 * @author David
 	 */
 	public static boolean saveToStorage(DataInformation oneInformation) {
-		
+
 		File file = new File(FILE_PATH);
 		LOG.finer("File defined: " + file);
 		try {
@@ -80,7 +80,7 @@ public class DataInformationFile {
 
 			oos.close();
 			fos.close();
-			
+
 			LOG.finest("Filled new ResultFile with 1st object");
 
 		} catch (Exception e) {
@@ -124,34 +124,59 @@ public class DataInformationFile {
 	} // End of loadFromStorage method
 
 	/**
-	 * This function will return the DataInformation Object stored for the Parent
+	 * This function will return the DataInformation Object stored for the
+	 * Parent Special case includes constructors which have the same name as the
+	 * class
 	 * 
+	 * @param expectedKind
+	 *            - generic Kind of the Parent (CLASS,METHOD,VARIABLE)
+	 * @param incudingConstructor
+	 *            - whether Constructor Methods should be taken into account as
+	 *            well
 	 * @return String defining the Scope
 	 * @author benste
 	 */
-	public static DataInformation getParentElement(String nameOfParent) {
-		LOG.entering("DataInformationFile","loadParamParentMethod");
+	public static DataInformation getParentElement(String nameOfParent,
+			Boolean incudingConstructor) {
+		LOG.entering("DataInformationFile", "loadParamParentMethod");
 		ArrayList<DataInformation> data = loadAllFromStorage();
-		
+
+		LOG.fine("Loaded all previously safed items, looking for: "
+				+ nameOfParent + " including Constructors:"
+				+ incudingConstructor);
 		// Generate an iterator. Start just after the last element.
 		ListIterator<DataInformation> list = data.listIterator(data.size());
 
 		// Iterate in reverse.
-		while(list.hasPrevious()) {
-			DataInformation obj =  list.previous();
-			if (obj.getName().equals(nameOfParent)){
-				LOG.finer("Found object which is parent: "+nameOfParent);
-				return obj;
-			} //end if
-		} //end while
+		while (list.hasPrevious()) {
+			DataInformation obj = list.previous();
+			if (obj.getName().equals(nameOfParent)) {
+				LOG.finer("Found object has the correct name for a parent: " + nameOfParent);
+				// if NOT taking care of constructor AND NOT is constructor
+				// == NOT (useconstructors || isconstructor)
+				if (!(incudingConstructor || obj.getDatatype().contains(
+						"CONSTRUCTOR"))) {
+					LOG.finest(obj + "excluding constructors found match");
+					return obj;
+				}
+				// if take care of constructor
+				// = simply first
 
-		LOG.info("No parent found with name: "+nameOfParent+" - assuming Top Level");
+				if (incudingConstructor) {
+					LOG.finest(obj + "including constructors found match");
+					return obj;
+				} else {
+
+				}
+			} // end if
+		} // end while
+
+		LOG.info("No enclosing parent found with name: " + nameOfParent
+				+ " - assuming Top Level \ncount of non enclosing same name");
 		return null;
 
 	} // End of loadFromStorage method
-	
-	
-	
+
 	/**
 	 * Clears the storage and leaves it empty for the next append to be the
 	 * first item

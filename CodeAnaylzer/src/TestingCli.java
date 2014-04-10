@@ -42,7 +42,7 @@ public class TestingCli {
 		String path4 = "TestFiles" + File.separator + "T08aTry.java";
 		paths.add(path4);
 		
-		TextSplitter t = new TextSplitter(paths.get(1));
+		TextSplitter t = new TextSplitter(paths.get(0));
 		t.compilingProcedure(t.getFileName());
 	}
 }

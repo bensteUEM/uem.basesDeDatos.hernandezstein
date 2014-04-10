@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.logging.Logger;
 
 import javax.lang.model.element.Element;
 
@@ -10,6 +11,10 @@ import javax.lang.model.element.Element;
  * 
  */
 public class DataInformation implements Serializable {
+
+	private final static Logger LOG = Logger.getLogger(DataInformation.class
+			.getName());
+
 	private String name = "";
 	private String scope = "";
 	private String datatype = "";
@@ -19,7 +24,7 @@ public class DataInformation implements Serializable {
 	private String returnValue = "";
 	private String parameters = "";
 	public Element sourceElement = null;
-	private String modifier= "";
+	private String modifier = "";
 
 	// GET and SET methods
 
@@ -69,11 +74,11 @@ public class DataInformation implements Serializable {
 	public void setParameters(String parameters) {
 		this.parameters = parameters;
 	}
-	
+
 	public String getModifiers() {
 		return this.modifier;
 	}
-	
+
 	public void setModifiers(String modifier) {
 		this.modifier = modifier;
 	}
@@ -86,9 +91,27 @@ public class DataInformation implements Serializable {
 		text += ("\n" + tabs + "Modifiers are: \t\t" + this.getModifiers());
 		text += ("\n" + tabs + "Return Value is: \t" + this.getReturnType());
 		text += ("\n" + tabs + "Parameters are: \t" + this.getParameters());
-		
+
 		return text;
 	}
 
-
+	/**
+	 * Abstract method to get the generic KIND of object safed
+	 * 
+	 * @return CLASS, METHOD or VARIABLE
+	 */
+	public String getKind() {
+		LOG.entering("DataInformation", "getKind");
+		if (this.datatype.contains("CLASS")) {
+			return "CLASS";
+		} else if (this.datatype.contains("METHOD")) {
+			return "METHOD";
+		} else if (this.datatype.contains("VARIABLE")
+				|| (this.datatype.contains("Field"))
+				|| (this.datatype.contains("Parameter"))) {
+			return "VARIABLE";
+		}
+		LOG.warning("Datatype can not be associated with any generic KIND");
+		return "";
+	}
 }
