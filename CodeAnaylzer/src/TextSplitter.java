@@ -281,7 +281,7 @@ public class TextSplitter {
 	 * 
 	 * @param paths
 	 */
-	public void compilingProcedure(String path) {
+	public void compilingProcedure() {
 		LOG.entering("TextSplitter", "compilingProcedure");
 		// Code Anaylzer Process ...
 
@@ -297,7 +297,7 @@ public class TextSplitter {
 		// Get the list of java file objects, in this case we have only
 		// one file, TestClass.java
 		ArrayList<String> paths = new ArrayList<String>();
-		paths.add(path);
+		paths.add(this.file.getPath());
 		LOG.finest("set up paths");
 		
 		
@@ -334,7 +334,7 @@ public class TextSplitter {
 	public String getFileName() {
 		return file.getPath();
 	}
-
+	
 	/*
 	 * First Version of the Code
 	 */

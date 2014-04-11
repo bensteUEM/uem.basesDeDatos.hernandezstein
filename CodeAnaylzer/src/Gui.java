@@ -9,6 +9,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
@@ -20,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * This class will implement the GUI functionalities include Loading a File
@@ -45,6 +47,7 @@ public class Gui extends JFrame {
 	private ActionListener guiLi;
 	private DefaultListModel<String> symbols;
 	private TextSplitter tool;
+	private String filePath;
 
 	/**
 	 * This is the constructor of the class
@@ -169,17 +172,29 @@ public class Gui extends JFrame {
 	}
 
 	/**
+	 * @return the filePath
+	 */
+	public String getFilePath() {
+		return filePath;
+	}
+
+	/**
+	 * @param filePath
+	 *            the filePath to set
+	 */
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+		tool = new TextSplitter(filePath);
+	}
+	
+	
+	/**
 	 * This is the button listener class.
 	 * 
 	 * @author David
 	 * 
 	 */
 	private class GuiListener implements ActionListener {
-
-		// Creates a file chooser
-		final JFileChooser fc = new JFileChooser();
-
-		private String filePath = "";
 
 		/**
 		 * This method is invoked when an action occurs.
@@ -204,19 +219,22 @@ public class Gui extends JFrame {
 		 * Method which is excecuted once a file is selected
 		 */
 		public void onPressBrowse() {
-			int returnVal = fc.showOpenDialog(this.fc);
+
 			// TODO limit visible FileTypes to .JAVA
+			JFileChooser chooser = new JFileChooser();
+			javax.swing.filechooser.FileFilter filter = new FileNameExtensionFilter(
+					"Java Source Code (*.java)", new String[] { "JAVA", "java" });
+			chooser.setFileFilter(filter);
+			chooser.setAcceptAllFileFilterUsed(false);
+
+			int returnVal = chooser.showOpenDialog(chooser);
+
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
-				File file = fc.getSelectedFile();
-				setFilePath(file.getAbsolutePath());
+				File chosenFile = chooser.getSelectedFile();
+				setFilePath(chosenFile.getPath());
+				tool = new TextSplitter(getFilePath());
+				tool.compilingProcedure();
 
-				if (getFilePath().endsWith(".java")) {
-					tool.compilingProcedure(getFilePath());
-				} else {
-					JOptionPane.showMessageDialog(getContentPane(),
-							"This tool will only analyse ONE .java File");
-
-				}
 			} else {
 				JOptionPane
 						.showMessageDialog(getContentPane(),
@@ -248,22 +266,6 @@ public class Gui extends JFrame {
 			// may be accessed by this.filepath
 
 		} // End of the searchItem method
-
-		/**
-		 * @return the filePath
-		 */
-		public String getFilePath() {
-			return filePath;
-		}
-
-		/**
-		 * @param filePath
-		 *            the filePath to set
-		 */
-		public void setFilePath(String filePath) {
-			this.filePath = filePath;
-			tool = new TextSplitter(filePath);
-		}
 
 	} // End of the GuiListener class
 
