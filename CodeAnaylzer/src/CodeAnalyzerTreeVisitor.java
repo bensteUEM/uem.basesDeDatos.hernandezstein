@@ -174,18 +174,19 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 			Tree parent = getParentTree(getCurrentPath());
 			if (parent.getKind().toString().equals("METHOD")) {
 				MethodTree mparent = (MethodTree) parent;
-				// Special CASE Parameter 
+				// Special CASE Parameter
 				// = parent Method contains this items name as parameter
 				if ((mparent).getParameters().toString()
 						.contains(variableTree.getName().toString())) {
-					d.setKind("PARAMETER (of "
-							+ mparent.getName().toString());
+					d.setKind("PARAMETER (of " + mparent.getName().toString());
 					LOG.finer("VAR IS PARAMETER of method "
 							+ mparent.getName().toString());
 				} else { // regular local Var
 					d.setKind("LOCAL " + d.getKind());
-				} // end if
-			} // end Parameter check part
+				} // end Parameter check part
+			} else { // regular local Var
+				d.setKind("LOCAL " + d.getKind());
+			} // end if parent is method
 		} // end local var
 
 		// Constants always have the "final" keyword and no enclosing method

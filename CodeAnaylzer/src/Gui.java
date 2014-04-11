@@ -125,7 +125,7 @@ public class Gui extends JFrame {
 
 		// TABLE	
 		jlDisplay.setDefaultRenderer(String.class, new GuiDefaultTableCellRenderer());
-		// seems not to be applied ... 
+		// seems not to be applied ... related to #39 Github
 		
 		for (Object name : DataInformation.getTableHeaders()) {
 			this.symbols.addColumn(name);
