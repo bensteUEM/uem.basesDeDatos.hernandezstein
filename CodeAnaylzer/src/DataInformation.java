@@ -20,7 +20,7 @@ public class DataInformation implements Serializable {
 
 	private String name = "";
 	private String scope = "";
-	private String datatype = "";
+	private String kind = "";
 	// private String initValue; //additional Function not needed in rev 1
 
 	// optional ones for non Variable Types only
@@ -54,12 +54,12 @@ public class DataInformation implements Serializable {
 		this.name = name;
 	}
 
-	public String getDatatype() {
-		return datatype;
+	public String getKind() {
+		return kind;
 	}
 
-	public void setDatatype(String datatype) {
-		this.datatype = datatype;
+	public void setKind(String datatype) {
+		this.kind = datatype;
 	}
 
 	public String getReturnType() {
@@ -89,7 +89,7 @@ public class DataInformation implements Serializable {
 	public String toString(String tabs) {
 		String text = "";
 		text += ("\n" + tabs + "Element is called \t" + this.getName());
-		text += ("\n" + tabs + "Kind of Element is: \t" + this.getDatatype());
+		text += ("\n" + tabs + "Kind of Element is: \t" + this.getKind());
 		text += ("\n" + tabs + "Scope of Element is: \t" + this.getScope());
 		text += ("\n" + tabs + "Modifiers are: \t\t" + this.getModifiers());
 		text += ("\n" + tabs + "Return Value is: \t" + this.getReturnType());
@@ -104,7 +104,7 @@ public class DataInformation implements Serializable {
 	 * @author bensteUEM
 	 */
 	public String toString(){
-		return (this.getName() + "\t\t"+this.getDatatype()+ "\t\t"+this.getScope()+ "\t\t"+this.getReturnType()+ "\t\t"+this.getParameters());
+		return (this.getName() + "\t\t"+this.getKind()+ "\t\t"+this.getScope()+ "\t\t"+this.getReturnType()+ "\t\t"+this.getParameters());
 	}
 
 	/**
@@ -112,15 +112,15 @@ public class DataInformation implements Serializable {
 	 * 
 	 * @return CLASS, METHOD or VARIABLE
 	 */
-	public String getKind() {
+	public String getAbstractKind() {
 		LOG.entering("DataInformation", "getKind");
-		if (this.datatype.contains("CLASS")) {
+		if (this.kind.contains("CLASS")) {
 			return "CLASS";
-		} else if (this.datatype.contains("METHOD")) {
+		} else if (this.kind.contains("METHOD")) {
 			return "METHOD";
-		} else if (this.datatype.contains("VARIABLE")
-				|| (this.datatype.contains("Field"))
-				|| (this.datatype.contains("Parameter"))) {
+		} else if (this.kind.contains("VARIABLE")
+				|| (this.kind.contains("Field"))
+				|| (this.kind.contains("Parameter"))) {
 			return "VARIABLE";
 		}
 		LOG.warning("Datatype can not be associated with any generic KIND");
@@ -136,7 +136,7 @@ public class DataInformation implements Serializable {
 	public Object[] toTableRow(){
 		ArrayList<String> values = new ArrayList<String>(0);
 		values.add(this.getName());
-		values.add(this.getDatatype());
+		values.add(this.getKind());
 		values.add(this.getScope());
 		values.add(this.getReturnType());
 		values.add(this.getParameters());

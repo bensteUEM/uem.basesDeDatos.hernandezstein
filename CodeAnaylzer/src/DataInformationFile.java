@@ -154,7 +154,7 @@ public class DataInformationFile {
 				LOG.finer("Found object has the correct name for a parent: " + nameOfParent);
 				// if NOT taking care of constructor AND NOT is constructor
 				// == NOT (useconstructors || isconstructor)
-				if (!(incudingConstructor || obj.getDatatype().contains(
+				if (!(incudingConstructor || obj.getKind().contains(
 						"CONSTRUCTOR"))) {
 					LOG.finest(obj + "excluding constructors found match");
 					return obj;

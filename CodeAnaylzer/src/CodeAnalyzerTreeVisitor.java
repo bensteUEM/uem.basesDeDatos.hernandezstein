@@ -78,7 +78,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		DataInformation d = new DataInformation();
 
 		// preset for Datatype
-		d.setDatatype(classTree.getKind().toString());
+		d.setKind(classTree.getKind().toString());
 		ModifiersTree m = classTree.getModifiers();
 
 		// Specials
@@ -113,11 +113,11 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		Scope scope = trees.getScope(path);
 
 		// preset for Datatype
-		d.setDatatype(methodTree.getKind().toString());
+		d.setKind(methodTree.getKind().toString());
 		ModifiersTree m = methodTree.getModifiers();
 		// Special Methods called Class Methods
 		if (m.toString().contains("static")) {
-			d.setDatatype("CLASS " + d.getDatatype() + " (Static Method)");
+			d.setKind("CLASS " + d.getKind() + " (Static Method)");
 		}
 		// Specials
 		/*
@@ -132,7 +132,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		// Check if its a Constructor
 		if (isConstructor(methodTree)) {
 			d.setName(scope.getEnclosingClass().getSimpleName().toString());
-			d.setDatatype("CONSTRUCTOR " + d.getDatatype());
+			d.setKind("CONSTRUCTOR " + d.getKind());
 		} else {
 			d.setName(methodTree.getName().toString());
 		}
@@ -157,11 +157,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		return super.visitMethod(methodTree, trees);
 	}
 
-	private boolean isConstructor(MethodTree methodTree) {
-		return methodTree.getName().toString().equals("<init>");
-		// TODO #26 in Github
-	}
-
 	@Override
 	public Object visitVariable(VariableTree variableTree, Trees trees) {
 		LOG.entering("CodeAnalyzerTreeVisitor", "visitVariable");
@@ -177,33 +172,33 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		 */
 
 		// preset for Datatype
-		d.setDatatype(variableTree.getKind().toString());
+		d.setKind(variableTree.getKind().toString());
 
 		// Local Variables = do always have an enclosing method scope and no
 		// other arguments, furthermore their scope is limited to their function
 		if ((scope.getEnclosingMethod() != null) && (m.toString().isEmpty())) {
-			d.setDatatype("LOCAL " + d.getDatatype());
+			d.setKind("LOCAL " + d.getKind());
 			d.setScope(getParentName());
 		} // end local var
 
 		// Constants always have the "final" keyword and no enclosing method
 		else if (m.toString().contains("final")) {
 			// && (scope.getEnclosingMethod() == null) {
-			d.setDatatype("CONSTANT " + d.getDatatype());
+			d.setKind("CONSTANT " + d.getKind());
 		}// / end Constant
 
 		// Instance Variable (Non-Static Field) = has no enclosing method only a
 		// class, furthermore no static modfier
 		else if (!(m.toString().contains("static"))) {
 			// && (scope.getEnclosingMethod() == null) {
-			d.setDatatype("INSTANCE " + d.getDatatype() + " (Non-Static Field)");
+			d.setKind("INSTANCE " + d.getKind() + " (Non-Static Field)");
 		} // end Var non Static
 
 		// Class Variable (Static Field) = has no enclosing method only a class,
 		// furthermore MUST HAVE static modfier
 		else if (m.toString().contains("static")) {
 			// && (scope.getEnclosingMethod() == null) {
-			d.setDatatype("CLASS " + d.getDatatype() + " (Static Field)");
+			d.setKind("CLASS " + d.getKind() + " (Static Field)");
 		} // end class static
 
 		// Parameter = parent Method contains this items name as parameter
@@ -218,7 +213,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 					MethodTree element = getMethod(leaf);
 					if (element.getParameters().toString()
 							.contains(variableTree.getName().toString())) {
-						d.setDatatype("PARAMETER of Method "
+						d.setKind("PARAMETER of Method "
 								+ element.getName().toString());
 						d.setScope(element.getName().toString());
 						LOG.finer("VAR IS PARAMETER of method "
@@ -428,14 +423,14 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		// if not any of those three modifier and neither a Parameter or Local
 		// Variable
 		// => use local scope + package + subclass
-		else if (!(d.getDatatype().startsWith("PARAMETER"))
-				&& !(d.getDatatype().startsWith("LOCAL"))) {
+		else if (!(d.getKind().startsWith("PARAMETER"))
+				&& !(d.getKind().startsWith("LOCAL"))) {
 			result = localScope + " + Package + SubClass";
 			LOG.finest("NONE - Mixed Scope applied");
 		}
 		// Variables which have no modifiers - Local = have their parent method
 		// / class as scope
-		else if (d.getDatatype().startsWith("LOCAL")) {
+		else if (d.getKind().startsWith("LOCAL")) {
 			if (!(getParentName().equals(""))) {
 				result = getParentName();
 			} else {
@@ -444,7 +439,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		}
 		// Variables which have no modifiers can be Local or Parameter. => both
 		// have their parent method / class as scope
-		else if (d.getDatatype().startsWith("PARAMETER")) {
+		else if (d.getKind().startsWith("PARAMETER")) {
 			if (!(getParentName().equals(""))) {
 				result = getParentName();
 				LOG.info("PARAMETER + Parent in Scope helper method is: <"
@@ -455,5 +450,10 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		}
 		LOG.finest("Following Scope has been determined: " + result);
 		return result;
+	}
+
+	private boolean isConstructor(MethodTree methodTree) {
+		return methodTree.getName().toString().equals("<init>");
+		// TODO #26 in Github
 	}
 }
