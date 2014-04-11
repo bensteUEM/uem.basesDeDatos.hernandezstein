@@ -278,17 +278,27 @@ public class Gui extends JFrame {
 				setFilePath(chosenFile.getPath());
 				tool = new TextSplitter(getFilePath());
 
+				// redirect errors and messages
 				tool.safeMessageOutput(true);
-
+				// start analysis
 				tool.compilingProcedure();
-				JOptionPane.showMessageDialog(
-						getContentPane(),
-						"Analysis finished with following: \n\n"
-								+ tool.getMessageOutput());
+
+				// Check if error messages do exist
+				String errors = tool.getErrorOutput();
+				if (errors.length() > 0) {
+					JOptionPane.showMessageDialog(getContentPane(),
+							"Errors in the SourceCode: \n\n" + errors);
+				} else { // Otherwise show finish Dialog
+					String messages = tool.getMessageOutput();
+					JOptionPane.showMessageDialog(getContentPane(),
+							"Analysis finished with following message: \n\n"
+									+ messages);
+					// Excecute Search Item to Refresh to List with all items
+					searchItem();
+				}
+				// change the output streams back to normal
 				tool.safeMessageOutput(false);
 
-				searchItem(); // Excecute Search Item to Refresh to List with
-								// all items
 			} else {
 				JOptionPane
 						.showMessageDialog(getContentPane(),

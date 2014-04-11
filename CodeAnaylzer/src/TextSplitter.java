@@ -31,8 +31,10 @@ public class TextSplitter {
 	private File file;
 	private FileReader fr;
 	private BufferedReader br;
-	private PrintStream newStream;
-	private ByteArrayOutputStream newStreamArray;
+	private PrintStream normalStream;
+	private ByteArrayOutputStream normalStreamArray;
+	private ByteArrayOutputStream errorStreamArray;
+	private PrintStream errorStream;
 
 	/**
 	 * Constructor to create a new Instance from a File
@@ -344,21 +346,28 @@ public class TextSplitter {
 		// CUSTOM CONSOLE OUTPUT STREAM
 		if (shouldSafe) {
 			// We first create a stream to hold the output
-			newStreamArray = new ByteArrayOutputStream();
-			newStream = new PrintStream(newStreamArray);
-
+			normalStreamArray = new ByteArrayOutputStream();
+			errorStreamArray = new ByteArrayOutputStream();
+			normalStream = new PrintStream(normalStreamArray);
+			errorStream = new PrintStream(errorStreamArray);
+			
 			// We tell system to use our output stream
-			System.setOut(newStream);
+			System.setOut(normalStream);
+			System.setErr(errorStream);
 			
 		}
 		// We set the output back to console
 		else {
 			System.out.flush();
 			System.setOut(System.out);
+			System.setErr(System.err);
 		}
 	}
 	
 	public String getMessageOutput(){
-		return newStreamArray.toString();
+		return normalStreamArray.toString();
+	}
+	public String getErrorOutput(){
+		return errorStreamArray.toString();
 	}
 } // End of the TextSplitter class
