@@ -265,7 +265,11 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 				|| elementKind.equals("WHILE_LOOP")
 				|| elementKind.equals("DO_LOOP")) {
 			LOG.finer("Found a loop structure, reporting parent as loop in ...");
-			return ("LOOP");
+			return ("LOOP block");
+			// return "iterator in a loop"; // +getParentTree(element.getPath())
+			// #40 Github
+		} else if (elementKind.equals("CATCH")) {
+			return ("(TRY) CATCH block");
 			// return "iterator in a loop"; // +getParentTree(element.getPath())
 			// #40 Github
 		} else {
@@ -376,7 +380,8 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		String parentScope = "?";
 		String localScope = "?";
 		String parentName = getParentName();
-		//TODO special case "iterator in a loop"; // +getParentTree(element.getPath()) #40 Github
+		// TODO special case "iterator in a loop"; //
+		// +getParentTree(element.getPath()) #40 Github
 		if (parentName.equals("")) {
 			LOG.fine("No Parent of - " + d.getName() + " - assuming TopLevel");
 			parentScope = "*";
