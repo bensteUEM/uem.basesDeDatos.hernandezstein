@@ -178,7 +178,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 				// = parent Method contains this items name as parameter
 				if ((mparent).getParameters().toString()
 						.contains(variableTree.getName().toString())) {
-					d.setKind("PARAMETER of Method "
+					d.setKind("PARAMETER (of "
 							+ mparent.getName().toString());
 					LOG.finer("VAR IS PARAMETER of method "
 							+ mparent.getName().toString());
@@ -434,8 +434,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		else if (d.getKind().startsWith("PARAMETER")) {
 			if (!(getParentName().equals(""))) {
 				result = getParentName();
-				LOG.info("PARAMETER + Parent in Scope helper method is: <"
-						+ getParentName() + ">");
 			} else {
 				LOG.warning("PARAMETER var without ParentName");
 			}
