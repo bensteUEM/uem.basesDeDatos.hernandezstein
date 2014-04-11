@@ -314,7 +314,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	 *         MethodTree,
 	 */
 	public Tree getParentTree(TreePath currentPath) {
-		//TODO #17 @Github (special case Parent of a Parameter of a Method)
 
 		LOG.entering("CodeAnalyzerTreeVisitor", "getParentTree");
 		Iterator<Tree> it = currentPath.iterator();
@@ -384,7 +383,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		String parentName = getParentName();
 		if (parentName.equals("")) {
 			LOG.fine("No Parent of - " + d.getName() + " - assuming TopLevel");
-			parentScope = "FileSystem";
+			parentScope = "*";
 			localScope = "";
 		} else {
 			// Check the Constructor Case

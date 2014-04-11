@@ -47,7 +47,7 @@ public class Gui extends JFrame {
 	// Calculates the dimension of the computer screen
 	// Sets the window size & location from the screen width and height data
 	Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-	final int FRAME_WIDTH = d.width / 2;
+	final int FRAME_WIDTH = d.width / 4 * 3;
 	final int FRAME_HEIGHT = d.height / 2;
 	private ActionListener guiLi;
 	private DefaultTableModel symbols;
@@ -75,10 +75,10 @@ public class Gui extends JFrame {
 		jbBrowse = new JButton("Browse File...");
 
 		// symbols = new DefaultTableModel(Object[][] data, numberof rows)
-		symbols = new DefaultTableModel(new Vector<String>(),0);		
+		symbols = new DefaultTableModel(new Vector<String>(), 0);
 		// Sets up the display list
 		jlDisplay = new JTable(this.symbols);
-		
+
 		// Places the JTextArea inside a ScrollPane
 		scrollBar = new JScrollPane(jlDisplay);
 
@@ -123,11 +123,18 @@ public class Gui extends JFrame {
 		jbSearch.setForeground(Color.WHITE);
 		jbSearch.setActionCommand("pressSearch");
 
-		
 		// TABLE
-		for (Object name : DataInformation.getTableHeaders() ) {
+		for (Object name : DataInformation.getTableHeaders()) {
 			this.symbols.addColumn(name);
-		} // Headers
+			/*
+			 * Prep for #35 on Github if (name.equals("Scope") ||
+			 * name.equals("Datatype")){ setColumnCount(int columnCount); //Sets
+			 * the number of columns in the model.
+			 * //this.symbols.getColumn().setMinWidth(250); } /* TableColumn c =
+			 * new TableColumn(0,200); c.setMinWidth(500);
+			 * c.setHeaderValue(name);
+			 */
+		}
 	}
 
 	private void linkOperations() {
@@ -186,25 +193,28 @@ public class Gui extends JFrame {
 	}
 
 	/**
-	 * This function replaces the existing data in the jiDisplay table with the values specified
-	 * @param data ArrayList<DataInformation> with all object to be added
+	 * This function replaces the existing data in the jiDisplay table with the
+	 * values specified
+	 * 
+	 * @param data
+	 *            ArrayList<DataInformation> with all object to be added
 	 * @author benste
 	 */
-	private void addToTableResults(ArrayList<DataInformation> data ){
-		//reset Table Content
+	private void addToTableResults(ArrayList<DataInformation> data) {
+		// reset Table Content
 		clearTable();
 
-		for (DataInformation item : data){	
+		for (DataInformation item : data) {
 			this.symbols.addRow(item.toTableRow());
 		} // Rows
 	}
-	
-	private void clearTable(){
+
+	private void clearTable() {
 		while (symbols.getRowCount() > 0) {
-           symbols.removeRow(0);
-        } 
+			symbols.removeRow(0);
+		}
 	}
-	
+
 	/**
 	 * @return the filePath
 	 */
@@ -267,14 +277,18 @@ public class Gui extends JFrame {
 				File chosenFile = chooser.getSelectedFile();
 				setFilePath(chosenFile.getPath());
 				tool = new TextSplitter(getFilePath());
-				
+
 				tool.safeMessageOutput(true);
-				
+
 				tool.compilingProcedure();
-				JOptionPane.showMessageDialog(getContentPane(),"Analysis finished with following: \n\n"+ tool.getMessageOutput());
+				JOptionPane.showMessageDialog(
+						getContentPane(),
+						"Analysis finished with following: \n\n"
+								+ tool.getMessageOutput());
 				tool.safeMessageOutput(false);
-				
-				searchItem(); //Excecute Search Item to Refresh to List with all items
+
+				searchItem(); // Excecute Search Item to Refresh to List with
+								// all items
 			} else {
 				JOptionPane
 						.showMessageDialog(getContentPane(),
@@ -292,7 +306,6 @@ public class Gui extends JFrame {
 					.loadAllFromStorage();
 			ArrayList<DataInformation> filtered = new ArrayList<DataInformation>();
 
-			
 			for (DataInformation item : data) {
 				if (searchKey.equals("") || item.getName().contains(searchKey)) {
 					// Save all elements which match search
