@@ -128,8 +128,8 @@ public class DataInformation implements Serializable {
 	}
 	
 	public static String[] getTableHeaders(){
-		String[] columnValues = { "Name", "Datatype",
-				"Scope", "ReturnType" , "Parameters" };
+		String[] columnValues = { "Name", "Kind",
+				"Scope", "(Return-)Type" , "Parameters" };
 		return columnValues;
 	}
 	

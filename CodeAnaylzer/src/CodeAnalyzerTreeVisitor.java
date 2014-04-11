@@ -167,11 +167,10 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		Scope scope = trees.getScope(path);
 		ModifiersTree m = variableTree.getModifiers();
 
-		/*
-		 * DATA Types
-		 */
-
-		// preset for Datatype
+		// DATA Types
+		d.setReturnType(variableTree.getType().toString());
+		
+		// preset for Kind
 		d.setKind(variableTree.getKind().toString());
 
 		// Local Variables = do always have an enclosing method scope and no
@@ -233,7 +232,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		 */
 		d.setName(variableTree.getName().toString());
 		d.setModifiers(variableTree.getModifiers().toString());
-		d.setReturnType("n/a");
 		d.setParameters("n/a");
 
 		// DEBUG printout of element
