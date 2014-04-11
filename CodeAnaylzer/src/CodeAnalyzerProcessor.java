@@ -24,7 +24,7 @@ public class CodeAnalyzerProcessor extends AbstractProcessor {
 	public boolean process(Set<? extends TypeElement> annotations,
 			RoundEnvironment roundEnvironment) {
 		for (Element e : roundEnvironment.getRootElements()) {
-			System.out.println("Element is " + e.getSimpleName());
+			System.out.println("Root element is " + e.getSimpleName());
 			// part 2
 
 			TreePath tp = trees.getPath(e);

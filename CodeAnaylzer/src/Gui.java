@@ -254,7 +254,7 @@ public class Gui extends JFrame {
 		public void onPressBrowse() {
 
 			// TODO limit visible FileTypes to .JAVA
-			JFileChooser chooser = new JFileChooser();
+			JFileChooser chooser = new JFileChooser(".");
 			javax.swing.filechooser.FileFilter filter = new FileNameExtensionFilter(
 					"Java Source Code (*.java)",
 					new String[] { "JAVA", "java" });
@@ -271,7 +271,7 @@ public class Gui extends JFrame {
 				tool.safeMessageOutput(true);
 				
 				tool.compilingProcedure();
-				JOptionPane.showMessageDialog(getContentPane(),"Analysis finished with following advices: \n\n"+ tool.getMessageOutput());
+				JOptionPane.showMessageDialog(getContentPane(),"Analysis finished with following: \n\n"+ tool.getMessageOutput());
 				tool.safeMessageOutput(false);
 				
 				searchItem(); //Excecute Search Item to Refresh to List with all items

@@ -221,7 +221,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 						d.setDatatype("PARAMETER of Method "
 								+ element.getName().toString());
 						d.setScope(element.getName().toString());
-						System.out.println("VAR IS PARAMETER of method "
+						LOG.finer("VAR IS PARAMETER of method "
 								+ element.getName().toString());
 					}
 				}
@@ -383,7 +383,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		String localScope = "?";
 		String parentName = getParentName();
 		if (parentName.equals("")) {
-			LOG.info("No Parent of - " + d.getName() + " - assuming TopLevel");
+			LOG.fine("No Parent of - " + d.getName() + " - assuming TopLevel");
 			parentScope = "FileSystem";
 			localScope = "";
 		} else {
@@ -440,7 +440,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 			if (!(getParentName().equals(""))) {
 				result = getParentName();
 			} else {
-				System.out.println("LOCAL var without ParentName");
+				LOG.warning("LOCAL var without ParentName");
 			}
 		}
 		// Variables which have no modifiers can be Local or Parameter. => both
@@ -448,11 +448,10 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		else if (d.getDatatype().startsWith("PARAMETER")) {
 			if (!(getParentName().equals(""))) {
 				result = getParentName();
-				System.out
-						.println("PARAMETER + Parent in Scope helper method is: <"
+				LOG.info("PARAMETER + Parent in Scope helper method is: <"
 								+ getParentName() + ">");
 			} else {
-				System.out.println("PARAMETER var without ParentName");
+				LOG.warning("PARAMETER var without ParentName");
 			}
 		}
 		LOG.finest("Following Scope has been determined: " + result);
