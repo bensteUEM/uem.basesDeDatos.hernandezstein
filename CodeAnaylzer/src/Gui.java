@@ -123,7 +123,10 @@ public class Gui extends JFrame {
 		jbSearch.setForeground(Color.WHITE);
 		jbSearch.setActionCommand("pressSearch");
 
-		// TABLE
+		// TABLE	
+		jlDisplay.setDefaultRenderer(String.class, new GuiDefaultTableCellRenderer());
+		// seems not to be applied ... 
+		
 		for (Object name : DataInformation.getTableHeaders()) {
 			this.symbols.addColumn(name);
 			/*
