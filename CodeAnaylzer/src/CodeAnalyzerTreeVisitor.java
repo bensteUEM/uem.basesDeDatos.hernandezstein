@@ -261,6 +261,13 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 			return getTreeItemName(getParentTree(pathtoWrapper));
 		} else if (elementKind.equals("COMPILATION_UNIT")) {
 			return "";
+		} else if (elementKind.equals("FOR_LOOP")
+				|| elementKind.equals("WHILE_LOOP")
+				|| elementKind.equals("DO_LOOP")) {
+			LOG.finer("Found a loop structure, reporting parent as loop in ...");
+			return ("LOOP");
+			// return "iterator in a loop"; // +getParentTree(element.getPath())
+			// #40 Github
 		} else {
 			LOG.warning("Element Type is not Implemented: "
 					+ elementKind.toString());
@@ -369,6 +376,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		String parentScope = "?";
 		String localScope = "?";
 		String parentName = getParentName();
+		//TODO special case "iterator in a loop"; // +getParentTree(element.getPath()) #40 Github
 		if (parentName.equals("")) {
 			LOG.fine("No Parent of - " + d.getName() + " - assuming TopLevel");
 			parentScope = "*";
