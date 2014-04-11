@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import javax.lang.model.element.Element;
@@ -124,5 +125,21 @@ public class DataInformation implements Serializable {
 		}
 		LOG.warning("Datatype can not be associated with any generic KIND");
 		return "";
+	}
+	
+	public static String[] getTableHeaders(){
+		String[] columnValues = { "Name", "Datatype",
+				"Scope", "ReturnType" , "Parameters" };
+		return columnValues;
+	}
+	
+	public Object[] toTableRow(){
+		ArrayList<String> values = new ArrayList<String>(0);
+		values.add(this.getName());
+		values.add(this.getDatatype());
+		values.add(this.getScope());
+		values.add(this.getReturnType());
+		values.add(this.getParameters());
+		return values.toArray();
 	}
 }

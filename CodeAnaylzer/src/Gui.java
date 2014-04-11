@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -20,8 +21,12 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 /**
  * This class will implement the GUI functionalities include Loading a File
@@ -36,7 +41,7 @@ public class Gui extends JFrame {
 	private JButton jbBrowse;
 	private JTextField jtfSearch;
 	private JButton jbSearch;
-	private JList<String> jlDisplay;
+	private JTable jlDisplay;
 	private JScrollPane scrollBar;
 
 	// Calculates the dimension of the computer screen
@@ -45,7 +50,7 @@ public class Gui extends JFrame {
 	final int FRAME_WIDTH = d.width / 2;
 	final int FRAME_HEIGHT = d.height / 2;
 	private ActionListener guiLi;
-	private DefaultListModel<String> symbols;
+	private DefaultTableModel symbols;
 	private TextSplitter tool;
 	private String filePath;
 
@@ -68,9 +73,12 @@ public class Gui extends JFrame {
 	private void createElements() {
 		// Sets up the 'Browse File...' button
 		jbBrowse = new JButton("Browse File...");
+
+		// symbols = new DefaultTableModel(Object[][] data, numberof rows)
+		symbols = new DefaultTableModel(new Vector<String>(),0);		
 		// Sets up the display list
-		symbols = new DefaultListModel<String>();
-		jlDisplay = new JList<String>(symbols);
+		jlDisplay = new JTable(this.symbols);
+		
 		// Places the JTextArea inside a ScrollPane
 		scrollBar = new JScrollPane(jlDisplay);
 
@@ -91,7 +99,7 @@ public class Gui extends JFrame {
 		setLocation(d.width / 2 - FRAME_WIDTH / 2, d.height / 2 - FRAME_HEIGHT
 				/ 2);
 
-		setTitle("Main Window"); // Sets up the window title
+		setTitle("Source Code - Table of Symbols"); // Sets up the window title
 		setResizable(true); // Resizable window
 		Image icon1 = Toolkit.getDefaultToolkit().getImage("img/uem_icon.gif");
 		// Gets an image from a file
@@ -114,6 +122,12 @@ public class Gui extends JFrame {
 		jbSearch.setBackground(BUTTONS_COLOR);
 		jbSearch.setForeground(Color.WHITE);
 		jbSearch.setActionCommand("pressSearch");
+
+		
+		// TABLE
+		for (Object name : DataInformation.getTableHeaders() ) {
+			this.symbols.addColumn(name);
+		} // Headers
 	}
 
 	private void linkOperations() {
@@ -172,6 +186,26 @@ public class Gui extends JFrame {
 	}
 
 	/**
+	 * This function replaces the existing data in the jiDisplay table with the values specified
+	 * @param data ArrayList<DataInformation> with all object to be added
+	 * @author benste
+	 */
+	private void addToTableResults(ArrayList<DataInformation> data ){
+		//reset Table Content
+		clearTable();
+
+		for (DataInformation item : data){	
+			this.symbols.addRow(item.toTableRow());
+		} // Rows
+	}
+	
+	private void clearTable(){
+		while (symbols.getRowCount() > 0) {
+           symbols.removeRow(0);
+        } 
+	}
+	
+	/**
 	 * @return the filePath
 	 */
 	public String getFilePath() {
@@ -186,8 +220,7 @@ public class Gui extends JFrame {
 		this.filePath = filePath;
 		tool = new TextSplitter(filePath);
 	}
-	
-	
+
 	/**
 	 * This is the button listener class.
 	 * 
@@ -223,7 +256,8 @@ public class Gui extends JFrame {
 			// TODO limit visible FileTypes to .JAVA
 			JFileChooser chooser = new JFileChooser();
 			javax.swing.filechooser.FileFilter filter = new FileNameExtensionFilter(
-					"Java Source Code (*.java)", new String[] { "JAVA", "java" });
+					"Java Source Code (*.java)",
+					new String[] { "JAVA", "java" });
 			chooser.setFileFilter(filter);
 			chooser.setAcceptAllFileFilterUsed(false);
 
@@ -234,7 +268,7 @@ public class Gui extends JFrame {
 				setFilePath(chosenFile.getPath());
 				tool = new TextSplitter(getFilePath());
 				tool.compilingProcedure();
-
+				searchItem(); //Excecute Search Item to Refresh to List with all items
 			} else {
 				JOptionPane
 						.showMessageDialog(getContentPane(),
@@ -246,24 +280,21 @@ public class Gui extends JFrame {
 		 * This method is called when 'Search' button is pressed.
 		 */
 		public void searchItem() {
-			String input = "";
-			symbols.clear();
 			String searchKey = jtfSearch.getText();
 
 			ArrayList<DataInformation> data = DataInformationFile
 					.loadAllFromStorage();
+			ArrayList<DataInformation> filtered = new ArrayList<DataInformation>();
 
+			
 			for (DataInformation item : data) {
 				if (searchKey.equals("") || item.getName().contains(searchKey)) {
-					// Adding all elements if no search param,
-					// otherwise those which contain parts of the search in
-					// their name
-					symbols.addElement(item.toString());
+					// Save all elements which match search
+					filtered.add(item);
 				}
 			}
-			// TODO Invoke here method & display results in jlDisplay
-			// The file path selected by user
-			// may be accessed by this.filepath
+			// add Items to an empty table
+			addToTableResults(filtered);
 
 		} // End of the searchItem method
 
