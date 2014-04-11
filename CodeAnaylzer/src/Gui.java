@@ -267,7 +267,13 @@ public class Gui extends JFrame {
 				File chosenFile = chooser.getSelectedFile();
 				setFilePath(chosenFile.getPath());
 				tool = new TextSplitter(getFilePath());
+				
+				tool.safeMessageOutput(true);
+				
 				tool.compilingProcedure();
+				JOptionPane.showMessageDialog(getContentPane(),"Analysis finished with following advices: \n\n"+ tool.getMessageOutput());
+				tool.safeMessageOutput(false);
+				
 				searchItem(); //Excecute Search Item to Refresh to List with all items
 			} else {
 				JOptionPane

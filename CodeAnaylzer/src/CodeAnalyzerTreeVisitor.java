@@ -73,7 +73,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	@Override
 	public Object visitClass(ClassTree classTree, Trees trees) {
 		LOG.entering("CodeAnalyzerTreeVisitor", "visitClass");
-		System.out.println("\n== This is a visited class");
+		//System.out.println("\n== This is a visited class");
 
 		DataInformation d = new DataInformation();
 
@@ -96,8 +96,9 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		d.setScope(generateTextScope(m, d));
 
 		// DEBUG printout of element
+		// System.out.println(d.toString(""));
+		
 		DataInformationFile.saveToStorage(d);
-		System.out.println(d.toString(""));
 
 		return super.visitClass(classTree, trees);
 	}
@@ -105,7 +106,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	@Override
 	public Object visitMethod(MethodTree methodTree, Trees trees) {
 		LOG.entering("CodeAnalyzerTreeVisitor", "visitMethod");
-		System.out.println("\n== This is a visited method");
+		//System.out.println("\n== This is a visited method");
 
 		DataInformation d = new DataInformation();
 		TreePath path = getCurrentPath();
@@ -149,8 +150,9 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		// TOFO eorking here ...
 
 		// DEBUG printout of element
+		// System.out.println(d.toString("\t"));
+		
 		DataInformationFile.saveToStorage(d);
-		System.out.println(d.toString("\t"));
 
 		return super.visitMethod(methodTree, trees);
 	}
@@ -163,7 +165,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 	@Override
 	public Object visitVariable(VariableTree variableTree, Trees trees) {
 		LOG.entering("CodeAnalyzerTreeVisitor", "visitVariable");
-		System.out.println("\n== This is a visited variable");
+		//System.out.println("\n== This is a visited variable");
 
 		DataInformation d = new DataInformation();
 		TreePath path = getCurrentPath();
@@ -240,7 +242,7 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 		d.setParameters("n/a");
 
 		// DEBUG printout of element
-		System.out.println(d.toString("\t"));
+		// System.out.println(d.toString("\t"));
 		DataInformationFile.saveToStorage(d);
 
 		return super.visitVariable(variableTree, trees);

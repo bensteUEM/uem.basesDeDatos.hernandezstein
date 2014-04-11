@@ -1,7 +1,9 @@
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.FileHandler;
@@ -29,6 +31,8 @@ public class TextSplitter {
 	private File file;
 	private FileReader fr;
 	private BufferedReader br;
+	private PrintStream newStream;
+	private ByteArrayOutputStream newStreamArray;
 
 	/**
 	 * Constructor to create a new Instance from a File
@@ -36,7 +40,7 @@ public class TextSplitter {
 	 * @param inputfile
 	 * @return ArrayList of Objects (either String or ArrayList<Object> )
 	 */
-	public TextSplitter (String pathToSourceCode) {
+	public TextSplitter(String pathToSourceCode) {
 		LOG.setLevel(Level.ALL);
 		try {
 			fh = new FileHandler("Logs" + File.separator + "TextSplitter.log");
@@ -47,15 +51,16 @@ public class TextSplitter {
 			e.printStackTrace();
 		}
 		LOG.fine("Text Splitter LOG initialized created");
-		
+
 		this.file = new File(pathToSourceCode);
 		this.openFile();
 	}
-	
+
 	/**
 	 * prohibited constructor with too few arguments
 	 */
-	private TextSplitter(){}
+	private TextSplitter() {
+	}
 
 	/**
 	 * This method is used to open a .JAVA file.
@@ -118,9 +123,11 @@ public class TextSplitter {
 
 	/**
 	 * This method counts the number of valid curly brackets used in the file
+	 * takes into acocunt comments
 	 * 
 	 * @return true if the number of curly braces is balanced, false in every
 	 *         other case.
+	 * @author David
 	 */
 	public boolean curlyCountLeveled() {
 
@@ -287,8 +294,7 @@ public class TextSplitter {
 
 		// Get an instance of java compiler
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-		
-		
+
 		// Get a new instance of the standard file manager implementation
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
 				null, null, null);
@@ -299,8 +305,7 @@ public class TextSplitter {
 		ArrayList<String> paths = new ArrayList<String>();
 		paths.add(this.file.getPath());
 		LOG.finest("set up paths");
-		
-		
+
 		Iterable<? extends JavaFileObject> compilationUnits1 = fileManager
 				.getJavaFileObjectsFromStrings(paths);
 
@@ -321,7 +326,7 @@ public class TextSplitter {
 
 		DataInformationFile.clearStorage();
 		LOG.finer("reset DataInformation File");
-		
+
 		// Perform the compilation task.
 		LOG.fine("will start now");
 		task.call();
@@ -334,41 +339,26 @@ public class TextSplitter {
 	public String getFileName() {
 		return file.getPath();
 	}
-	
-	/*
-	 * First Version of the Code
-	 */
-	/**
-	 * This method is used to read the file line by line and structure it into
-	 * smaller parts which represent its structure
-	 * 
-	 * @return structured SourceCode
-	 * @author benste
-	 */
-	/* public ArrayList<JavaStructure> structureCode() { ArrayList<String> line;
-	 * String textLine; try { while (null != (textLine = br.readLine())) {
-	 * 
-	 * This part will read a new Line and convert it to an ArrayList split by
-	 * Spaces
-	 * 
-	 * LOG.finest("started with new line"); System.out.println(textLine); //
-	 * TODO DEBUG line = java.util.List<String> templine =
-	 * Arrays.asList(textLine .split(" ")); line = new
-	 * ArrayList<String>(templine);
-	 * 
-	 * // This part will search for empty items from the line ArrayList<String>
-	 * delete = new ArrayList<String>(); for (String text : line) { if
-	 * ((text.equals("")) || (text.equals(" ")) || (text == null)) {
-	 * System.out.println("items removed from text"); delete.add(text); } } //
-	 * This part removes all empty items from a line for (String text : delete)
-	 * { line.remove(text); } delete = null; // End of looking for empty values
-	 * 
-	 * // Skip the line if its empty if (line.isEmpty()) { continue; }
-	 * 
-	 * // TODO continue here with analysis } } catch (IOException e) {
-	 * e.printStackTrace(); }
-	 * 
-	 * return null; // TODO DEBUG } // End of structureCode method
-	 */
 
+	public void safeMessageOutput(boolean shouldSafe) {
+		// CUSTOM CONSOLE OUTPUT STREAM
+		if (shouldSafe) {
+			// We first create a stream to hold the output
+			newStreamArray = new ByteArrayOutputStream();
+			newStream = new PrintStream(newStreamArray);
+
+			// We tell system to use our output stream
+			System.setOut(newStream);
+			
+		}
+		// We set the output back to console
+		else {
+			System.out.flush();
+			System.setOut(System.out);
+		}
+	}
+	
+	public String getMessageOutput(){
+		return newStreamArray.toString();
+	}
 } // End of the TextSplitter class
