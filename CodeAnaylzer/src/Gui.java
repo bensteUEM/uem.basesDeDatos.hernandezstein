@@ -39,6 +39,7 @@ public class Gui extends JFrame {
 
 	private static final long serialVersionUID = 4384002466857611830L;
 	private JButton jbBrowse;
+	private JButton jbAbout;
 	private JTextField jtfSearch;
 	private JButton jbSearch;
 	private JTable jlDisplay;
@@ -73,6 +74,7 @@ public class Gui extends JFrame {
 	private void createElements() {
 		// Sets up the 'Browse File...' button
 		jbBrowse = new JButton("Browse File...");
+		jbAbout = new JButton("About");
 
 		// symbols = new DefaultTableModel(Object[][] data, numberof rows)
 		symbols = new DefaultTableModel(new Vector<String>(), 0);
@@ -109,6 +111,7 @@ public class Gui extends JFrame {
 		final Font FONT_1 = new Font("Helvetica", Font.PLAIN, 12);
 		final Color BUTTONS_COLOR = Color.DARK_GRAY;
 		final Color BACKGROUND_COLOR = Color.LIGHT_GRAY;
+		final Color UEMCOLOR = new Color(143, 27, 39);
 		getContentPane().setBackground(BACKGROUND_COLOR);
 
 		// apply to elements
@@ -117,16 +120,22 @@ public class Gui extends JFrame {
 		jbBrowse.setForeground(Color.WHITE);
 		jbBrowse.setActionCommand("pressBrowse");
 
+		jbAbout.setFont(FONT_1);
+		jbAbout.setBackground(UEMCOLOR);
+		jbAbout.setForeground(Color.WHITE);
+		jbAbout.setActionCommand("pressAbout");
+
 		jtfSearch.setFont(FONT_1);
 		jbSearch.setFont(FONT_1);
 		jbSearch.setBackground(BUTTONS_COLOR);
 		jbSearch.setForeground(Color.WHITE);
 		jbSearch.setActionCommand("pressSearch");
 
-		// TABLE	
-		jlDisplay.setDefaultRenderer(String.class, new GuiDefaultTableCellRenderer());
+		// TABLE
+		jlDisplay.setDefaultRenderer(String.class,
+				new GuiDefaultTableCellRenderer());
 		// seems not to be applied ... related to #39 Github
-		
+
 		for (Object name : DataInformation.getTableHeaders()) {
 			this.symbols.addColumn(name);
 			/*
@@ -144,6 +153,8 @@ public class Gui extends JFrame {
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Disposes window on
 		// close
 		jbBrowse.addActionListener(guiLi); // Registers the object as a listener
+		// of the component
+		jbAbout.addActionListener(guiLi); // Registers the object as a listener
 		// of the component
 		jbSearch.addActionListener(guiLi); // Registers the object as a listener
 		// of the component
@@ -167,10 +178,19 @@ public class Gui extends JFrame {
 		GridBagConstraints constraints_jbBrowse = new GridBagConstraints();
 		constraints_jbBrowse.gridx = 0;
 		constraints_jbBrowse.gridy = 0;
-		constraints_jbBrowse.gridwidth = 2;
+		constraints_jbBrowse.gridwidth = 1;
 		constraints_jbBrowse.gridheight = 1;
 		constraints_jbBrowse.fill = GridBagConstraints.HORIZONTAL;
 		getContentPane().add(jbBrowse, constraints_jbBrowse);
+
+		// Create the Gridbag Layout
+		GridBagConstraints constraints_jbAbout = new GridBagConstraints();
+		constraints_jbAbout.gridx = 1;
+		constraints_jbAbout.gridy = 0;
+		constraints_jbAbout.gridwidth = 2;
+		constraints_jbAbout.gridheight = 1;
+		constraints_jbAbout.fill = GridBagConstraints.HORIZONTAL;
+		getContentPane().add(jbAbout, constraints_jbAbout);
 
 		// Create the Gridbag Layout
 		GridBagConstraints constraints_jtfSearch = new GridBagConstraints();
@@ -253,12 +273,20 @@ public class Gui extends JFrame {
 				onPressBrowse();
 
 			}
-			if (e.getActionCommand().equals("pressSearch")) { // Is invoked when
+			else if (e.getActionCommand().equals("pressSearch")) { // Is invoked when
 																// 'Search'
 																// button is
 																// pressed
 				searchItem();
 			}
+			else if (e.getActionCommand().equals("pressAbout")) { // Is invoked when
+				// 'About' button is pressed
+				JOptionPane.showMessageDialog(getContentPane(), 
+						"<html><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/4.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png\" /></a><br /><span xmlns:dct=\"http://purl.org/dc/terms/\" property=\"dct:title\">Code Analyzer</span> by <span xmlns:cc=\"http://creativecommons.org/ns#\" property=\"cc:attributionName\">David H. and bensteUEM</span> is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/4.0/\">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br />Based on a work at <a xmlns:dct=\"http://purl.org/dc/terms/\" href=\"https://github.com/bensteUEM/uem.basesDeDatos.hernandezstein\" rel=\"dct:source\">https://github.com/bensteUEM/uem.basesDeDatos.hernandezstein</a></html>"
+						); 
+				
+
+}
 		} // End of the actionPerformed method
 
 		/**
