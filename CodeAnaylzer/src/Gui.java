@@ -68,6 +68,9 @@ public class Gui extends JFrame {
 		configureElements();
 		linkOperations();
 		layoutElements();
+		clearOldDataFile();
+		
+
 
 	} // End of the constructor of the class
 
@@ -252,6 +255,13 @@ public class Gui extends JFrame {
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
 		tool = new TextSplitter(filePath);
+	}
+	
+	/**
+	 * Cleans the dataInfo file
+	 */
+	public void clearOldDataFile(){
+		DataInformationFile.clearStorage();
 	}
 
 	/**
