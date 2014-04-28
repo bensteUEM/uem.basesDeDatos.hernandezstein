@@ -1,6 +1,13 @@
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
 
 public class TestingCli {
+	
+	private final static Logger LOG = Logger.getLogger(TestingCli.class
+			.getName());
 
 	/**
 	 * @param args
@@ -9,7 +16,10 @@ public class TestingCli {
 	 */
 	public static void main(String[] args) {
 		// check and create directories
-				
+
+		
+		LOG.setLevel(Level.ALL);
+		
 		File theFile = new File("Logs"+File.separator+"test");
 		File theDir = new File(theFile.getParent());
 

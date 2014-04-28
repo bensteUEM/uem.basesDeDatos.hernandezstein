@@ -10,7 +10,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 public class DataInformationFile {
 	private final static Logger LOG = Logger.getLogger(TextSplitter.class
@@ -18,6 +21,19 @@ public class DataInformationFile {
 	final static String FILE_PATH = "results" + File.separator + "dataInfo.dat";
 
 	static {
+		LOG.setLevel(Level.ALL);
+		try {
+			FileHandler fh = new FileHandler("Logs" + File.separator + "DataInformationFile.log");
+			LOG.addHandler(fh);
+			SimpleFormatter formatter = new SimpleFormatter();
+			fh.setFormatter(formatter);
+		} catch (SecurityException | IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+		
+		
 		File theFile = new File(FILE_PATH);
 		File theDir = new File(theFile.getParent());
 

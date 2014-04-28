@@ -325,6 +325,7 @@ public class Gui extends JFrame {
 
 				// redirect errors and messages
 				tool.safeMessageOutput(true);
+				tool.safeMessageOutput(false); //TODO DEBUG delete this line
 				// start analysis
 				tool.compilingProcedure();
 

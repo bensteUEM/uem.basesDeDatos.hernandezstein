@@ -48,7 +48,6 @@ public class CodeAnalyzerTreeVisitor extends TreePathScanner<Object, Trees> {
 
 	public CodeAnalyzerTreeVisitor() {
 		super();
-		LOG.setLevel(Level.ALL);
 		try {
 			FileHandler fh = new FileHandler("Logs" + File.separator
 					+ "CodeAnalyzerTreeVisitor.log");

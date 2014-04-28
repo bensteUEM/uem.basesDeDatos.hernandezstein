@@ -14,6 +14,7 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
+
 import javax.tools.ToolProvider;
 import javax.tools.JavaCompiler.CompilationTask;
 
@@ -43,8 +44,8 @@ public class TextSplitter {
 	 * @return ArrayList of Objects (either String or ArrayList<Object> )
 	 */
 	public TextSplitter(String pathToSourceCode) {
-		LOG.setLevel(Level.WARNING);
 		try {
+			LOG.setLevel(Level.ALL);
 			fh = new FileHandler("Logs" + File.separator + "TextSplitter.log");
 			LOG.addHandler(fh);
 			SimpleFormatter formatter = new SimpleFormatter();
@@ -294,13 +295,26 @@ public class TextSplitter {
 	public void compilingProcedure() {
 		LOG.entering("TextSplitter", "compilingProcedure");
 		// Code Anaylzer Process ...
-
+		LOG.severe("Test pre compiler");
 		// Get an instance of java compiler
 		JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-
+		LOG.severe("Test post compiler");
+		LOG.severe("Test pre filemanager");
 		// Get a new instance of the standard file manager implementation
+		try //TODO DEBUG
+		{ StandardJavaFileManager fileManager = compiler.getStandardFileManager(
+				null, null, null);
+		System.out.println("File Manager passed"); //TODO DEBUG
+		}
+		catch (Exception e){
+			LOG.warning(e.getMessage());
+			e.printStackTrace();
+			
+		}
 		StandardJavaFileManager fileManager = compiler.getStandardFileManager(
 				null, null, null);
+		//TODO this is where the error is !
+		LOG.severe("Test post filemanager");
 		LOG.finest("set up compiler and file Manager");
 
 		// Get the list of java file objects, in this case we have only
@@ -308,6 +322,8 @@ public class TextSplitter {
 		ArrayList<String> paths = new ArrayList<String>();
 		paths.add(this.file.getPath());
 		LOG.finest("set up paths");
+		
+		LOG.warning("Test 1");
 
 		Iterable<? extends JavaFileObject> compilationUnits1 = fileManager
 				.getJavaFileObjectsFromStrings(paths);
@@ -315,6 +331,7 @@ public class TextSplitter {
 		CompilationTask task = compiler.getTask(null, fileManager, null, null,
 				null, compilationUnits1);
 		LOG.finest("set up compilation task");
+		LOG.warning("Test 2");
 
 		// Create a list to hold annotation processors
 		LinkedList<AbstractProcessor> processors = new LinkedList<AbstractProcessor>();
@@ -322,18 +339,19 @@ public class TextSplitter {
 		// Add an annotation processor to the list
 		// processors.add(new CodeAnalyzerProcessorBENSTE());
 		processors.add(new CodeAnalyzerProcessor());
-
+		LOG.warning("Test 3");
 		// Set the annotation processor to the compiler task
 		task.setProcessors(processors);
 		LOG.finest("set up processors");
-
+		LOG.warning("Test 4");
 		DataInformationFile.clearStorage();
 		LOG.finer("reset DataInformation File");
-
+		LOG.warning("Test 5");
 		// Perform the compilation task.
 		LOG.fine("will start now");
 		task.call();
 		LOG.fine("finished now");
+		LOG.severe("Test 6");
 	}
 
 	/**
