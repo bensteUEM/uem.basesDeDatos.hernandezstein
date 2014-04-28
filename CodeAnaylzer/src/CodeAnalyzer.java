@@ -1,4 +1,3 @@
-import java.io.File;
 import java.util.ArrayList;
 
 /**
@@ -10,12 +9,14 @@ import java.util.ArrayList;
 public class CodeAnalyzer {
 	private ArrayList<Object> structureSourceCode; // remaining source code part
 													// to be anaylzed
+	@SuppressWarnings("unused")
 	private String currentScope; // current Scope in Class.method.part writing
 	private ArrayList<DataInformation> symbols;
 
 	/**
 	 * Constructor without Data should not be allowed
 	 */
+	@SuppressWarnings("unused")
 	private CodeAnalyzer() {
 	}
 

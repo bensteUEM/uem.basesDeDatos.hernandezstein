@@ -43,7 +43,7 @@ public class TextSplitter {
 	 * @return ArrayList of Objects (either String or ArrayList<Object> )
 	 */
 	public TextSplitter(String pathToSourceCode) {
-		LOG.setLevel(Level.ALL);
+		LOG.setLevel(Level.WARNING);
 		try {
 			fh = new FileHandler("Logs" + File.separator + "TextSplitter.log");
 			LOG.addHandler(fh);
@@ -61,6 +61,7 @@ public class TextSplitter {
 	/**
 	 * prohibited constructor with too few arguments
 	 */
+	@SuppressWarnings("unused")
 	private TextSplitter() {
 	}
 

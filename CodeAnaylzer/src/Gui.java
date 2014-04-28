@@ -1,32 +1,25 @@
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileFilter;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
 
 /**
  * This class will implement the GUI functionalities include Loading a File
@@ -69,8 +62,6 @@ public class Gui extends JFrame {
 		linkOperations();
 		layoutElements();
 		clearOldDataFile();
-		
-
 
 	} // End of the constructor of the class
 
@@ -104,11 +95,11 @@ public class Gui extends JFrame {
 		setLocation(d.width / 2 - FRAME_WIDTH / 2, d.height / 2 - FRAME_HEIGHT
 				/ 2);
 
-		setTitle("Source Code - Table of Symbols"); // Sets up the window title
+		setTitle("Source Code Analyzer - Table of Symbols"); // Sets up the window title
 		setResizable(true); // Resizable window
-		Image icon1 = Toolkit.getDefaultToolkit().getImage("img/uem_icon.gif");
-		// Gets an image from a file
-		setIconImage(icon1); // Sets an image as the icon of the window
+		
+		ImageIcon icon = createImageIcon("/resources/img/uem_icon.gif","UEM Logo");
+		setIconImage(icon.getImage());
 
 		// Declares a custom font & some colors
 		final Font FONT_1 = new Font("Helvetica", Font.PLAIN, 12);
@@ -149,6 +140,16 @@ public class Gui extends JFrame {
 			 * new TableColumn(0,200); c.setMinWidth(500);
 			 * c.setHeaderValue(name);
 			 */
+		}
+	}
+
+	protected ImageIcon createImageIcon(String path, String description) {
+		java.net.URL imgURL = getClass().getResource(path);
+		if (imgURL != null) {
+			return new ImageIcon(imgURL, description);
+		} else {
+			System.err.println("Couldn't find file: " + path);
+			return null;
 		}
 	}
 
@@ -256,11 +257,11 @@ public class Gui extends JFrame {
 		this.filePath = filePath;
 		tool = new TextSplitter(filePath);
 	}
-	
+
 	/**
 	 * Cleans the dataInfo file
 	 */
-	public void clearOldDataFile(){
+	public void clearOldDataFile() {
 		DataInformationFile.clearStorage();
 	}
 
@@ -282,21 +283,24 @@ public class Gui extends JFrame {
 																// pressed
 				onPressBrowse();
 
-			}
-			else if (e.getActionCommand().equals("pressSearch")) { // Is invoked when
-																// 'Search'
-																// button is
-																// pressed
+			} else if (e.getActionCommand().equals("pressSearch")) { // Is
+																		// invoked
+																		// when
+																		// 'Search'
+																		// button
+																		// is
+																		// pressed
 				searchItem();
-			}
-			else if (e.getActionCommand().equals("pressAbout")) { // Is invoked when
+			} else if (e.getActionCommand().equals("pressAbout")) { // Is
+																	// invoked
+																	// when
 				// 'About' button is pressed
-				JOptionPane.showMessageDialog(getContentPane(), 
-						"<html><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/4.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png\" /></a><br /><span xmlns:dct=\"http://purl.org/dc/terms/\" property=\"dct:title\">Code Analyzer</span> by <span xmlns:cc=\"http://creativecommons.org/ns#\" property=\"cc:attributionName\">David H. and bensteUEM</span> is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/4.0/\">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br />Based on a work at <a xmlns:dct=\"http://purl.org/dc/terms/\" href=\"https://github.com/bensteUEM/uem.basesDeDatos.hernandezstein\" rel=\"dct:source\">https://github.com/bensteUEM/uem.basesDeDatos.hernandezstein</a></html>"
-						); 
-				
+				JOptionPane
+						.showMessageDialog(
+								getContentPane(),
+								"<html><h1> v0.99c</h1><a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/4.0/\"><img alt=\"Creative Commons License\" style=\"border-width:0\" src=\"http://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png\" /></a><br /><span xmlns:dct=\"http://purl.org/dc/terms/\" property=\"dct:title\">Code Analyzer</span> by <span xmlns:cc=\"http://creativecommons.org/ns#\" property=\"cc:attributionName\">David H. and bensteUEM</span> is licensed under a <a rel=\"license\" href=\"http://creativecommons.org/licenses/by-nc-sa/4.0/\">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.<br />Based on a work at <a xmlns:dct=\"http://purl.org/dc/terms/\" href=\"https://github.com/bensteUEM/uem.basesDeDatos.hernandezstein\" rel=\"dct:source\">https://github.com/bensteUEM/uem.basesDeDatos.hernandezstein</a></html>");
 
-}
+			}
 		} // End of the actionPerformed method
 
 		/**
