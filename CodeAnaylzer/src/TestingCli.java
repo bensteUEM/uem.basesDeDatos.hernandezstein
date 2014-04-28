@@ -1,3 +1,5 @@
+import java.io.File;
+
 public class TestingCli {
 
 	/**
@@ -6,6 +8,16 @@ public class TestingCli {
 	 * @author tbd
 	 */
 	public static void main(String[] args) {
+		// check and create directories
+				
+		File theFile = new File("Logs"+File.separator+"test");
+		File theDir = new File(theFile.getParent());
+
+		// if the directory does not exist, create it
+		if (!theDir.exists()) {
+			theDir.mkdir();
+		}
+		
 		Gui gui = new Gui();
 		gui.setVisible(true);
 
